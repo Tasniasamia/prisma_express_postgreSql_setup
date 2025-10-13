@@ -16,7 +16,7 @@ const globalErrorHandler: ErrorRequestHandler = (
 ): any => {
     let statusCode: number = 500;
     let message: string = 'Something went wrong';
-    let errorMessage: string = 'Server Side error';
+    let errorMessage : string = 'Server Side error';
     let errorDetails: unknown = null;
     let success:boolean;
     console.log(error)
@@ -28,15 +28,10 @@ const globalErrorHandler: ErrorRequestHandler = (
         message = simplifiedError?.message;
         errorMessage = simplifiedError?.errorMessage as string;
         errorDetails = simplifiedError?.errorDetails;
-    } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    }  else if (typeof error?.code === 'string' && error.code.startsWith('P')) {
         const simplifiedError = handlePrismaError(error);
-        success= simplifiedError?.success;
-
-        statusCode = simplifiedError?.statusCode;
-        message = simplifiedError?.message;
-        errorMessage = simplifiedError?.errorMessage as string;
-        errorDetails = simplifiedError?.errorDetails;
-    } 
+        ({ success, statusCode, message, errorMessage='Unhandled Prisma Error Occurred', errorDetails } = simplifiedError);
+      }
      else if (error instanceof AppError) {
         statusCode = error?.statusCode;
         message = error?.message;

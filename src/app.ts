@@ -6,6 +6,9 @@ import morgan from "morgan"
 import dotenv from "dotenv"
 import { db } from "./config/db"
 import middleware from "./middlewares"
+import z from "zod"
+import route from "./routes"
+import globalErrorHandler from "./middlewares/globalErrorHandler"
   
   dotenv.config({path: './.env',});
   
@@ -13,7 +16,7 @@ import middleware from "./middlewares"
   const port = process.env.PORT || 3000;
   const app = express();
   
-                                
+console.log("z.string",z.string({message:'wrr'}))           
   
   
 app.use(
@@ -22,12 +25,11 @@ app.use(
     crossOriginEmbedderPolicy: envMode !== "DEVELOPMENT",
   })
 );
-    
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors({origin:' * ',credentials:true}));
 app.use(...middleware); 
-  
+app.use('/api/v1',route);
 app.post('/', async (req, res) => {
   try {
     const createUser = await db.user.create({
@@ -53,6 +55,6 @@ app.post('/', async (req, res) => {
     });
   });
   
-    
+  app.use(globalErrorHandler);
   app.listen(port, () => console.log('Server is working on Port:'+port+' in '+envMode+' Mode.'));
   

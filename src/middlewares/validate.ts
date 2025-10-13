@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { ZodAny } from 'zod';
+import { ZodObject } from 'zod';
 
-export const validate=(schema:ZodAny)=>{
+export const validate=(schema:ZodObject)=>{
    return async(req:Request,res:Response,next:NextFunction)=>{
      try{
-       await schema.parseAsync({body:req?.body,cookies:req?.cookies});
+       await schema.parseAsync(req?.body);
        next();
      }
      catch(error){
