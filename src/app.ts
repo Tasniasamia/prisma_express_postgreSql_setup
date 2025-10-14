@@ -10,6 +10,7 @@ import z from "zod"
 import route from "./routes"
 import globalErrorHandler from "./middlewares/globalErrorHandler"
 import nodemailer from "nodemailer"
+import { Resend } from "resend"
   dotenv.config({path: './.env',});
   
   export const envMode = process.env.NODE_ENV?.trim() || 'DEVELOPMENT';
@@ -48,26 +49,36 @@ app.post('/', async (req, res) => {
   
   
   app.post('/send',async(req,res)=>{
-    const transporter = nodemailer.createTransport({
-      host: "admin@gmail.com",
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: "jude.boyer14@ethereal.email",
-        pass: "cvhXGfpt78dvJcVB8g",
-      },
-    });
+    /*using nodemailer*/
+    // const transporter =await  nodemailer.createTransport({
+    //   host: "smtp.ethereal.email",
+    //   port: 587,
+    //   secure: false, // true for 465, false for other ports
+    //   auth: {
+    //     user: "nestor.batz82@ethereal.email",
+    //     pass: "we4rcm9KhGPY71qdVc",
+    //   },
+    // });
     
-    // Wrap in an async IIFE so we can use await.
+    // // Wrap in an async IIFE so we can use await.
   
-      const info = await transporter.sendMail({
-        from: '"Maddison Foo Koch" <jude.boyer14@ethereal.email>',
-        to: "sharintasnia1@gmail.com",
-        subject: "Hello ✔",
-        text: "Hello world?", // plain‑text body
-        html: "<b>Hello world?</b>", // HTML body
-      });
-    res.status(200).send(info);
+    //   const info = await transporter.sendMail({
+    //     from: '"Maddison Foo Koch" <jude.boyer14@ethereal.email>',
+    //     to: "sharintasnia1@gmail.com",
+    //     subject: "Hello ✔",
+    //     text: "Hello world?", // plain‑text body
+    //     html: "<b>Hello world?</b>", // HTML body
+    //   });
+    // await res.status(200).send(info);
+
+    const resend = new Resend('re_Hd9Bp22d_4chxCX2omkZVfnWp2hQbsGJv');
+    const { data, error } = await resend.emails.send({
+      from: 'Summer Camp <onboarding@resend.dev>',
+      to: ['sharintasnia1@gmail.com'],
+      subject: 'Hello World',
+      html: '<strong>Your OTP verification code is .....</strong>',
+    });
+    res.status(200).send("ok");
   })
   app.get("*", (req, res) => {
     res.status(404).json({
