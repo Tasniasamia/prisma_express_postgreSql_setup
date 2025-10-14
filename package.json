@@ -25,6 +25,7 @@
   "helmet": "8.1.0",
   "http-status": "^2.1.0",
   "morgan": "1.10.1",
+  "nodemailer": "^7.0.9",
   "zod": "^4.1.12"
  },
  "devDependencies": {
@@ -37,6 +38,7 @@
   "@types/helmet": "4.0.0",
   "@types/morgan": "1.9.10",
   "@types/node": "24.7.1",
+  "@types/nodemailer": "^7.0.2",
   "eslint": "9.37.0",
   "globals": "16.4.0",
   "prisma": "^6.17.1",
