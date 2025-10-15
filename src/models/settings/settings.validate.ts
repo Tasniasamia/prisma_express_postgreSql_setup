@@ -6,22 +6,6 @@ const resendSchema = z.object({
 }).strict();
 
 const emailConfigSchema = z.object({
-  default: z.enum(["sendgrid", "gmail"]).optional(),
-  sendgrid: z
-    .object({
-      host: z.string().optional(),
-      port: z.number().optional(),
-      sender_email: z.string().email().optional(),
-      password: z.string().optional(),
-    })
-    .optional(),
-  gmail: z
-    .object({
-      service_provider: z.string().optional(),
-      auth_email: z.string().email().optional(),
-      password: z.string().optional(),
-    })
-    .optional(),
   resend: resendSchema.optional(),
 }).strict().optional();
 

@@ -1,4 +1,4 @@
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@/generated/prisma/client';
 import { TGenericErrorResponse } from '../interface/error';
 
 const handlePrismaError = (error: unknown): TGenericErrorResponse => {
@@ -45,6 +45,13 @@ const handlePrismaError = (error: unknown): TGenericErrorResponse => {
         };
 
       case 'P2021':
+        return {
+          success: false,
+          statusCode: 500,
+          message: 'Database Schema Error',
+          errorMessage: `Table or column not found in database.`,
+          errorDetails: error,
+        };
       case 'P2022':
         return {
           success: false,

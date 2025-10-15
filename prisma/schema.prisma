@@ -39,8 +39,8 @@ model user {
   @@map("users")
 }
 
-model setting {
-  id                    String  @id @default(uuid())
+model Setting {
+  id                    String   @id @default(uuid())
   site_name             String?
   site_email            String?
   site_phone            String?
@@ -51,21 +51,51 @@ model setting {
   client_side_url       String?
   server_side_url       String?
   otp_verification_type String? // "email" | "phone"
+  
+  // Relation fields
+  email_config_id String?
+  cloud_config_id String?
 
-  email_config Json?
+  email_config  EmailConfig?  @relation(fields: [email_config_id], references: [id])
+  cloud_config  CloudConfig?  @relation(fields: [cloud_config_id], references: [id])
 
-  cloud_config Json?
-
-  stripe Json?
-
-  paypal Json?
-
-  razorpay Json?
-
-  mollie            Json?
-  social_media_link Json?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  stripe             Json?
+  paypal             Json?
+  razorpay           Json?
+  mollie             Json?
+  social_media_link  Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@map("settings")
+}
+
+model EmailConfig {
+  id         String   @id @default(uuid())
+  resend_api_key String
+  resend_email   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  setting  Setting?
+}
+
+model CloudConfig {
+  id          String   @id @default(uuid())
+  cloud_name  String
+  api_key     String
+  api_secret  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  setting  Setting?
+}
+
+
+model otp{
+id String @id @default(uuid())
+identifier String
+action String
+otp String
+createdAt  DateTime @default(now())
 }
