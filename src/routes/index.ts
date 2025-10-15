@@ -1,3 +1,4 @@
+import { otpRoutes } from "@/models/otp/otp.route";
 import { settingRoute } from "@/models/settings/settings.route";
 import { userRoutes } from "@/models/user/user.route";
 import { Router } from "express";
@@ -12,6 +13,10 @@ import { Router } from "express";
     {
         path:'/setting',
         routes:settingRoute
+    },
+    {
+        path:'/otp',
+        routes:otpRoutes
     }
 ]
 allRoutes?.forEach((i,index)=>{

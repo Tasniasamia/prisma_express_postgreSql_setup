@@ -10,6 +10,6 @@ const otpSchemaValidation = z.object({
 });
 export type otpInput = z.infer<typeof otpSchemaValidation>;
 
-export const userValidate={
+export const otpValidate={
     otpSchemaValidation
 }

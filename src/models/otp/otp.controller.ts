@@ -46,7 +46,7 @@ export class OTPController {
                 "OTP Send Successfully",
                 []
               );
-             return  res.status(statusCode).json({success,statusCode, message,data});
+             return  res.status(statusCode).json({success,statusCode, message,data:{otp:otp}});
             }
             throw new AppError(
               429,
@@ -70,7 +70,7 @@ export class OTPController {
                   "OTP Send Successfully",
                   []
                 );
-               return  res.status(statusCode).json({success,statusCode, message,data});
+               return  res.status(statusCode).json({success,statusCode, message,data:{otp:otp}});
               }
               throw new AppError(
                 429,
@@ -91,7 +91,7 @@ export class OTPController {
             "OTP Send Successfully",
             []
           );
-         return  res.status(statusCode).json({success,statusCode, message,data});
+         return  res.status(statusCode).json({success,statusCode, message,data:{otp:otp}});
         }
         throw new AppError(
           429,
@@ -111,7 +111,7 @@ export class OTPController {
               "OTP Send Successfully",
               []
             );
-           return  res.status(statusCode).json({success,statusCode, message,data});
+           return  res.status(statusCode).json({success,statusCode, message,data:{otp:otp}});
           }
           throw new AppError(
             429,

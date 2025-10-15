@@ -16,7 +16,7 @@ export class OTPService{
     if(findByIdentifierAction){
         const then=new Date(findByIdentifierAction?.createdAt).getTime();
         const now=Date.now();
-        const diff=(now-then)*(1000*60);
+        const diff=(now-then)/(1000*60);
         if(diff>=2){
             await db.otp.delete({where:{id:findByIdentifierAction?.id}})
             return false;
