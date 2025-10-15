@@ -10,11 +10,13 @@ import z from "zod"
 import route from "./routes"
 import globalErrorHandler from "./middlewares/globalErrorHandler"
 import nodemailer from "nodemailer"
+import emailjs from '@emailjs/browser'
 import { Resend } from "resend"
+import { notFoundHandler } from "./middlewares/notFoundHandler"
   dotenv.config({path: './.env',});
   
-  export const envMode = process.env.NODE_ENV?.trim() || 'DEVELOPMENT';
-  const port = process.env.PORT || 3000;
+  export const envMode = process.env.NODE_ENV?.trim() || 'development';
+  const port = process.env.PORT || 4000;
   const app = express();
   
 console.log("z.string",z.string({message:'wrr'}))           
@@ -33,13 +35,7 @@ app.use(...middleware);
 app.use('/api/v1',route);
 app.post('/', async (req, res) => {
   try {
-    const createUser = await db.user.create({
-      data: {
-        name: "Tasnia",
-        email: "you@gmail.com"
-      }
-    });
-
+    
     res.status(201).send('User created Successfully');
   } catch (error) {
     console.error(error);
@@ -49,6 +45,14 @@ app.post('/', async (req, res) => {
   
   
   app.post('/send',async(req,res)=>{
+
+
+
+
+
+
+
+
     /*using nodemailer*/
     // const transporter =await  nodemailer.createTransport({
     //   host: "smtp.ethereal.email",
@@ -59,9 +63,6 @@ app.post('/', async (req, res) => {
     //     pass: "we4rcm9KhGPY71qdVc",
     //   },
     // });
-    
-    // // Wrap in an async IIFE so we can use await.
-  
     //   const info = await transporter.sendMail({
     //     from: '"Maddison Foo Koch" <jude.boyer14@ethereal.email>',
     //     to: "sharintasnia1@gmail.com",
@@ -71,13 +72,14 @@ app.post('/', async (req, res) => {
     //   });
     // await res.status(200).send(info);
 
-    const resend = new Resend('re_Hd9Bp22d_4chxCX2omkZVfnWp2hQbsGJv');
-    const { data, error } = await resend.emails.send({
-      from: 'Summer Camp <onboarding@resend.dev>',
-      to: ['sharintasnia1@gmail.com'],
-      subject: 'Hello World',
-      html: '<strong>Your OTP verification code is .....</strong>',
-    });
+     /*resend processing*/
+    // const resend = new Resend('re_Hd9Bp22d_4chxCX2omkZVfnWp2hQbsGJv');
+    // const { data, error } = await resend.emails.send({
+    //   from: 'Summer Camp <onboarding@resend.dev>',
+    //   to: ['sharintasnia1@gmail.com'],
+    //   subject: 'Hello World',
+    //   html: '<strong>Your OTP verification code is .....</strong>',
+    // });
     res.status(200).send("ok");
   })
   app.get("*", (req, res) => {
@@ -88,5 +90,6 @@ app.post('/', async (req, res) => {
   });
   
   app.use(globalErrorHandler);
+  app.use(notFoundHandler);
   app.listen(port, () => console.log('Server is working on Port:'+port+' in '+envMode+' Mode.'));
   

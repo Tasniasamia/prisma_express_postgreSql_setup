@@ -7,7 +7,7 @@ export const notFoundHandler=(req:Request,res:Response):void=>{
         success:false,
         statusCode:httpStatus.NOT_FOUND,
         message:"API NOT FOUND",
-        errorMessage:null,
+        errorMessage:"API NOT FOUND",
         errorDetails:null
 
     })

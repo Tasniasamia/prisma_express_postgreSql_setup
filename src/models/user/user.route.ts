@@ -5,8 +5,7 @@ import { userController } from "./user.controller";
 
 const router = Router();
 router.post(
-  "/resister",
-  validate(userValidate.registrationSchemaValidation),
+  "/resister",validate(userValidate.registrationSchemaValidation),
   userController.registrationController
 );
 

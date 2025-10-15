@@ -12,42 +12,60 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
-enum Role{
+
+enum Role {
   ADMIN @map("admin")
   USER  @map("user")
 }
-model user{
-  id String @id @default(uuid()) 
-  name String?
-  email String @unique
-  password String
-  image String?
-  role Role
-  country String?
-  city String?
-  state String?
-  zip_code String?
-  address String?
-  about String?
-  is_deleted Boolean?
+
+model user {
+  id          String   @id @default(uuid())
+  name        String?
+  email       String   @unique
+  password    String
+  image       String?
+  role        Role
+  country     String?
+  city        String?
+  state       String?
+  zip_code    String?
+  address     String?
+  about       String?
+  is_deleted  Boolean?
   is_modified Boolean? @ignore
+
+  @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
-@@index([name(sort:Asc),email(sort:Asc)])
 }
-  // name: string;
-  //   email?: string | undefined | null;
-  //   phone?: string | undefined | null;
-  //   password: string;
-  //   image?: string;
-  //   role: string;
-  //   country?: string;
-  //   city?: string;
-  //   state?: string;
-  //   zip_code: number;
-  //   address?: string;
-  //   about?: string;
-  //   permissions?: Types.ObjectId;
-  //   is_deleted: boolean;
-  //   isModified: (field: string) => boolean;
+
+model setting {
+  id                    String  @id @default(uuid())
+  site_name             String?
+  site_email            String?
+  site_phone            String?
+  site_logo             String?
+  site_address          String?
+  site_description      String?
+  site_footer           String?
+  client_side_url       String?
+  server_side_url       String?
+  otp_verification_type String? // "email" | "phone"
+
+  email_config Json?
+
+  cloud_config Json?
+
+  stripe Json?
+
+  paypal Json?
+
+  razorpay Json?
+
+  mollie            Json?
+  social_media_link Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("settings")
+}

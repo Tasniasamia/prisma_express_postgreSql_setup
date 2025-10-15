@@ -1,3 +1,4 @@
+import { settingRoute } from "@/models/settings/settings.route";
 import { userRoutes } from "@/models/user/user.route";
 import { Router } from "express";
 
@@ -7,6 +8,10 @@ import { Router } from "express";
     {
         path:'/user',
         routes:userRoutes
+    },
+    {
+        path:'/setting',
+        routes:settingRoute
     }
 ]
 allRoutes?.forEach((i,index)=>{
