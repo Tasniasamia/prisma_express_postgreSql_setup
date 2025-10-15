@@ -12,8 +12,8 @@ export class OTPService{
     }
     
     static findExistUser=async(identifier:string,action:string)=>{
-     const findByIdentifierAction=await db.otp.findFirst({where:{identifier:identifier,action:action}});
-     if(findByIdentifierAction){
+    const findByIdentifierAction=await db.otp.findFirst({where:{identifier:identifier,action:action}});
+    if(findByIdentifierAction){
         const then=new Date(findByIdentifierAction?.createdAt).getTime();
         const now=Date.now();
         const diff=(now-then)*(1000*60);

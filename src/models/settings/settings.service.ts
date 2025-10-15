@@ -11,6 +11,14 @@ export class SettingService {
     return data;
   };
 
+  static findResendEmailSettings=async()=>{
+    const data = await db.setting.findFirst({select:{email_config:true}});
+    if (!data) {
+      return null;
+    }
+    return data;
+  }
+
   static postAndUpdateSettings = async (payload: settingsType) => {
     const settingsData = await this.findSettings();
     const { email_config, cloud_config, ...rest } = payload;

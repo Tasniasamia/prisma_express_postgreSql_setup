@@ -6,8 +6,6 @@ type settingsType = {
   site_address?: string;
   site_description?: string;
   site_footer?: string;
-  currency_code?: string;
-  currency_symbol?: string;
   client_side_url?: string;
   server_side_url?: string;
   otp_verification_type?: "email" | "phone";
