@@ -36,3 +36,28 @@ export const uploadCloudinary = async (localdirpath: string) => {
     throw error;
   }
 };
+
+
+
+
+export const deleteImage = async (imagePath: string): Promise<void> => {
+  try {
+    const isCloudinaryImage = imagePath.includes("res.cloudinary.com");
+
+    if (isCloudinaryImage) {
+      const match = imagePath.match(/\/upload\/(?:v\d+\/)?(.+?)\.[a-z]+$/i);
+      const publicId = match ? match[1] : null;
+
+      if (publicId) {
+        console.log("🗑️ Deleting Cloudinary image:", publicId);
+        await cloudinary.uploader.destroy(publicId);
+      } else {
+        throw new AppError(400,' Could not extract public_id from',' Could not extract public_id from')
+
+      }
+    } 
+
+  } catch (error:any) {
+    throw new AppError(400,'Error deleting image',error?.message)
+  }
+};
