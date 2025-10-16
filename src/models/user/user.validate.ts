@@ -23,7 +23,7 @@ const registrationSchemaValidation = z.object({
       "Password must contain at least one special character"
     )
     .nonempty("password is required"),
-    // image: z.string().url("Image must be a valid URL").optional(),
+    image: z.string().url("Image must be a valid URL").optional(),
     otp:z.string().nonempty('OTP is required'),
     role: z.enum(["USER", "ADMIN"]),
     phone:z.string({message:"phone number is required"}).optional(),

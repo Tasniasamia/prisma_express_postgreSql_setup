@@ -2,6 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import dotenv from "dotenv";
 import { SettingService } from "@/models/settings/settings.service";
+import { AppError } from "@/errors/appError";
 
 dotenv.config();
 
@@ -9,7 +10,7 @@ export const initCloudinary = async () => {
   const environmentVariable = await SettingService.findCloudinarySettings();
 
   if (!environmentVariable?.cloud_config) {
-    throw new Error("Cloudinary configuration not found in database.");
+    throw new AppError(400,'Cloudinary configuration not found in database.',"Cloudinary configuration not found in database.");
   }
 
   cloudinary.config({
@@ -28,10 +29,10 @@ export const uploadCloudinary = async (localdirpath: string) => {
       resource_type: "auto",
     });
 
-    // fs.unlinkSync(localdirpath); 
+    fs.unlinkSync(localdirpath); 
     return response;
   } catch (error) {
-    // if (fs.existsSync(localdirpath)) fs.unlinkSync(localdirpath);
+    if (fs.existsSync(localdirpath)) fs.unlinkSync(localdirpath);
     throw error;
   }
 };

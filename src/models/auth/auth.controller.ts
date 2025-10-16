@@ -15,7 +15,7 @@ export class authController {
         name,
         email,
         password,
-        image,
+        image='',
         phone,
         role,
         country,
@@ -44,12 +44,12 @@ export class authController {
           imageURL = await uploadCloudinary(req.file.path);
         }
         console.log("image URL",imageURL);
-        
+        console.log("req file path",req.file?.path)
         await AuthService.postUser({
           name,
           email,
           password:hashPassword,
-          // image:imageURL?.url,
+          image:imageURL?.url,
           phone,
           role,
           country,
