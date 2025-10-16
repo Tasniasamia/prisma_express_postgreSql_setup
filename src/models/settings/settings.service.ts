@@ -86,4 +86,12 @@ export class SettingService {
       },
     });
   };
+
+  static findCloudinarySettings=async()=>{
+    const data = await db.setting.findFirst({select:{cloud_config:true}});
+    if (!data) {
+      return null;
+    }
+    return data;
+  }
 }

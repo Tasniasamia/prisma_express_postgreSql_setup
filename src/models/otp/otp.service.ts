@@ -28,4 +28,12 @@ export class OTPService{
      }
      return false;
     }
+
+    static verifyOTP=async(identifier:string,action:string,otp:string)=>{
+        const findByIdentifierActionOTP=await db.otp.findFirst({where:{identifier:identifier,action:action,otp:otp}});
+        if(findByIdentifierActionOTP){
+            return true;
+        }
+        return false;
+    }
 }

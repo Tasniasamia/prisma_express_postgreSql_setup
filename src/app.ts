@@ -13,6 +13,7 @@ import nodemailer from "nodemailer"
 import emailjs from '@emailjs/browser'
 import { Resend } from "resend"
 import { notFoundHandler } from "./middlewares/notFoundHandler"
+import { initCloudinary } from "./utils/cloudinary"
   dotenv.config({path: './.env',});
   
   export const envMode = process.env.NODE_ENV?.trim() || 'development';
@@ -91,5 +92,7 @@ app.post('/', async (req, res) => {
   
   app.use(globalErrorHandler);
   app.use(notFoundHandler);
-  app.listen(port, () => console.log('Server is working on Port:'+port+' in '+envMode+' Mode.'));
-  
+  (async () => {
+    await initCloudinary();
+    app.listen(4000, () => console.log("Server running on port 4000"));
+  })();  

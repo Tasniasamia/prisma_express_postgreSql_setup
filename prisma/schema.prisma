@@ -35,7 +35,7 @@ model user {
   about       String?
   is_deleted  Boolean?
   is_modified Boolean? @ignore
-
+  otp         String
   @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
 }
