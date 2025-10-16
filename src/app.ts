@@ -21,9 +21,7 @@ import { fileURLToPath } from "url"
   export const envMode = process.env.NODE_ENV?.trim() || 'development';
   const port = process.env.PORT || 4000;
   const app = express();
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  console.log("__dirname",path.join(__dirname, "/public/tmp"));
+
 
   
 app.use(
@@ -32,9 +30,10 @@ app.use(
     crossOriginEmbedderPolicy: envMode !== "DEVELOPMENT",
   })
 );
-app.use(express.json({limit:"2MB"}));
-// app.use(express.urlencoded({extended:true , limit:"2MB"}));
-app.use(cors({origin:' * ',credentials:true}));
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
+app.use(cors({ origin: '*', credentials: true }));
+
 app.use(...middleware); 
 app.use('/api/v1',route);
 app.post('/', async (req, res) => {

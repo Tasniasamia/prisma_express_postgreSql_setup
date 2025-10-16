@@ -12,5 +12,9 @@ route.post(
   validate(userValidate.registrationSchemaValidation),
   authController.registrationController
 );
+route.post('/deleteImage',authController.deleteImageController);
+route.get('/profile',authController.getprofileController);
+route.put('/profile',upload.single('image'),authController.updateProfileController)
+
 
 export const authRoutes: Router = route;

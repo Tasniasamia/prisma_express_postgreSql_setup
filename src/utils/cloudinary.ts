@@ -24,11 +24,11 @@ export const initCloudinary = async () => {
 export const uploadCloudinary = async (localdirpath: string) => {
   try {
     if (!localdirpath) return null;
-
+  
     const response = await cloudinary.uploader.upload(localdirpath, {
       resource_type: "auto",
     });
-
+   console.log("coming response",response)
     fs.unlinkSync(localdirpath); 
     return response;
   } catch (error) {
@@ -40,24 +40,35 @@ export const uploadCloudinary = async (localdirpath: string) => {
 
 
 
-export const deleteImage = async (imagePath: string): Promise<void> => {
+export const deleteImage:any = async (imagePath: string): Promise<boolean> => {
   try {
+    // Cloudinary URL কিনা চেক করো
     const isCloudinaryImage = imagePath.includes("res.cloudinary.com");
+    if (!isCloudinaryImage) return false;
 
-    if (isCloudinaryImage) {
-      const match = imagePath.match(/\/upload\/(?:v\d+\/)?(.+?)\.[a-z]+$/i);
-      const publicId = match ? match[1] : null;
+    // public_id extract করো
+    const match = imagePath.match(/\/upload\/(?:v\d+\/)?(.+?)\.[a-z]+$/i);
+    const publicId = match ? match[1] : null;
 
-      if (publicId) {
-        console.log("🗑️ Deleting Cloudinary image:", publicId);
-        await cloudinary.uploader.destroy(publicId);
-      } else {
-        throw new AppError(400,' Could not extract public_id from',' Could not extract public_id from')
+    if (!publicId) {
+      console.warn("⚠️ Could not extract public_id from URL:", imagePath);
+      return false;
+    }
 
-      }
-    } 
+    console.log("🗑️ Deleting Cloudinary image:", publicId);
+    const result = await cloudinary.uploader.destroy(publicId);
 
-  } catch (error:any) {
-    throw new AppError(400,'Error deleting image',error?.message)
+    // যদি সফলভাবে delete হয়
+    if (result?.result === "ok" || result?.result === "not found") {
+      // "not found" মানে image আগেই delete হয়ে গেছে
+      return true;
+    } else {
+      console.error("❌ Cloudinary delete failed:", result);
+      return false;
+    }
+
+  } catch (error: any) {
+    console.error("🔥 Error deleting image:", error?.message);
+    return false;
   }
 };
