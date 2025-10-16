@@ -5,10 +5,12 @@ import { AuthService } from "./auth.service";
 import { successResponse } from "@/utils/successResponse";
 import { AppError } from "@/errors/appError";
 import { uploadCloudinary } from "@/utils/cloudinary";
+import { generateHashPassword } from "./auth.utils";
 
 export class authController {
   static registrationController = catchAsync(
     async (req: Request, res: Response) => {
+      console.log("req?.file",req?.files);
       const {
         name,
         email,
@@ -36,16 +38,18 @@ export class authController {
 
 
       if (isOTPVerify) {
-        let imagePath=req?.file?.path;
+        const hashPassword=await generateHashPassword(password);
         let imageURL;
-        if(imagePath){
-            imageURL=await uploadCloudinary(imagePath);
+        if (req.file?.path) {
+          imageURL = await uploadCloudinary(req.file.path);
         }
+        console.log("image URL",imageURL);
+        
         await AuthService.postUser({
           name,
           email,
-          password,
-          image:imageURL?.url,
+          password:hashPassword,
+          // image:imageURL?.url,
           phone,
           role,
           country,

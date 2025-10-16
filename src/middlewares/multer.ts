@@ -1,12 +1,27 @@
+// src/middlewares/multer.js
 import multer from "multer";
-import type { Request } from "express";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
-  destination: function (req: Request, file, cb) {
-    cb(null, "public/tmp");
+  destination: function (req, file, cb) {
+    // absolute path বানাও — ESM এ এটাই safe
+    const uploadPath = path.join(__dirname, "../../public/tmp");
+
+    // folder না থাকলে create করো
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+      console.log("✅ Created upload folder:", uploadPath);
+    }
+
+    cb(null, uploadPath);
   },
-  filename: function (req: Request, file, cb) {
-    cb(null, file.originalname);
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 

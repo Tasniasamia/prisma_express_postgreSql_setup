@@ -14,14 +14,17 @@ import emailjs from '@emailjs/browser'
 import { Resend } from "resend"
 import { notFoundHandler } from "./middlewares/notFoundHandler"
 import { initCloudinary } from "./utils/cloudinary"
+import path from "path"
+import { fileURLToPath } from "url"
   dotenv.config({path: './.env',});
   
   export const envMode = process.env.NODE_ENV?.trim() || 'development';
   const port = process.env.PORT || 4000;
   const app = express();
-  
-console.log("z.string",z.string({message:'wrr'}))           
-  
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  console.log("__dirname",path.join(__dirname, "/public/tmp"));
+
   
 app.use(
   helmet({
@@ -29,8 +32,8 @@ app.use(
     crossOriginEmbedderPolicy: envMode !== "DEVELOPMENT",
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.json({limit:"2MB"}));
+// app.use(express.urlencoded({extended:true , limit:"2MB"}));
 app.use(cors({origin:' * ',credentials:true}));
 app.use(...middleware); 
 app.use('/api/v1',route);

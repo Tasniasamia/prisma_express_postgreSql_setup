@@ -28,10 +28,10 @@ export const uploadCloudinary = async (localdirpath: string) => {
       resource_type: "auto",
     });
 
-    fs.unlinkSync(localdirpath); 
+    // fs.unlinkSync(localdirpath); 
     return response;
   } catch (error) {
-    if (fs.existsSync(localdirpath)) fs.unlinkSync(localdirpath);
+    // if (fs.existsSync(localdirpath)) fs.unlinkSync(localdirpath);
     throw error;
   }
 };
