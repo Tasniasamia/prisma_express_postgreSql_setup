@@ -14,4 +14,15 @@ export class AuthService{
  
     }
 
+    static updateUser=async(email:string,data:object)=>{
+        const findUser=await userService.findUserByEmail(email);
+        if(!findUser){
+            throw new AppError(400,'User Not Found','User Not Found');
+        }
+       return await db.user.update({
+            where: { email: email },
+            data: data,
+          });
+    } 
+
 }

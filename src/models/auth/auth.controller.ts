@@ -99,10 +99,11 @@ export class authController {
         password,
         role,
       });
-      await db.user.update({
-        where: { email },
-        data: { refreshToken },
-      });
+      await AuthService.updateUser(email,{refreshToken:refreshToken})
+      // await db.user.update({
+      //   where: { email },
+      //   data: { refreshToken },
+      // });
         res.cookie("token", token, {
         httpOnly: false,
         secure: false,
@@ -145,9 +146,7 @@ export class authController {
   static updateProfileController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       const { email, decoded, otp, image, password, ...updateData } = req.body;
-      const existingUser = await db.user.findFirst({
-        where: { email: decoded?.email },
-      });
+      const existingUser = await userService.findUserByEmail(decoded?.email);
 
       if (!existingUser) {
         throw new AppError(404, "User not found", "User not found");
@@ -265,10 +264,8 @@ export class authController {
       if (!decoded || typeof decoded === "string") {
         throw new AppError(401, "Invalid Token", "Malformed token payload");
       }
+      const user=await userService.findUserByEmail(decoded?.email)
   
-      const user = await db.user.findFirst({
-        where: { email: decoded.email }, 
-      });
   
       if (!user) {
         throw new AppError(404, "User not found", "No user for this token");
@@ -278,14 +275,11 @@ export class authController {
         throw new AppError(401, "Invalid Refresh Token", "Token mismatch");
       }
   
-      const payload = { id: user.id, email: user.email, role: user.role };
+      const payload = { id: user.id, email: user.email,password:user?.password, role: user.role };
       const newAccessToken = await generateToken(payload);
       const newRefreshToken = await generateRefreshToken(payload);
+      await AuthService.updateUser(user?.email,{ refreshToken: newRefreshToken })
   
-      await db.user.update({
-        where: { id: user.id },
-        data: { refreshToken: newRefreshToken },
-      });
   
       const options: any = {
         httpOnly: false,
@@ -320,44 +314,55 @@ export class authController {
   static resetPasswordController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       const { identifier, action, otp, password, decoded } = req.body;
-
-      // 🧩 decoded check — token থেকে আসা user info
+  
       if (!decoded?.email) {
         throw new AppError(401, "Unauthorized", "Invalid or missing token data");
       }
-      const existingUser = await db.user.findFirst({
-        where: { email: decoded.email },
-      });
-
+  
+      const existingUser = await userService.findUserByEmail(decoded.email);
       if (!existingUser) {
         throw new AppError(404, "User not found", "No user found for this email");
       }
+  
       const isEmail = validateEmail(identifier);
       const otpVerificationEmail = await OTPService.findByOtpVerificationTypeEmail();
-
-      if (isEmail && !otpVerificationEmail) {
-        throw new AppError(
-          404,
-          "Invalid Access",
-          "OTP verification via email is currently disabled."
-        );
+  
+      if (isEmail) {
+        if (!otpVerificationEmail) {
+          throw new AppError(
+            403,
+            "Email OTP not enabled",
+            "OTP verification via email is currently disabled."
+          );
+        }
+        if (decoded.email !== identifier) {
+          throw new AppError(
+            400,
+            "Invalid identifier",
+            "Email in token and identifier do not match"
+          );
+        }
       }
-
+  
       const isOTPVerified = await OTPService.verifyOTP(identifier, action, otp);
-
       if (!isOTPVerified) {
         throw new AppError(400, "Invalid OTP", "OTP verification failed");
       }
+  
+      if (!password || password.length < 8) {
+        throw new AppError(400, "Weak Password", "Password must be at least 6 characters");
+      }
+  
       const hashedPassword = await generateHashPassword(password);
-      await db.user.update({
-        where: { email: decoded.email },
-        data: { password: hashedPassword },
-      });
+      await AuthService.updateUser(decoded.email, { password: hashedPassword });
+  
       const { success, statusCode, message, data } = successResponse(
         "Password reset successfully",
         {}
       );
-     return res.status(statusCode).json({ success, statusCode, message, data });
+  
+      return res.status(statusCode).json({ success, statusCode, message, data });
     }
   );
+  
 }
