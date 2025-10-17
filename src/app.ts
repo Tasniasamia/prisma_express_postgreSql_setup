@@ -41,7 +41,6 @@ app.post('/', async (req, res) => {
     
     res.status(201).send('User created Successfully');
   } catch (error) {
-    console.error(error);
     res.status(500).send('Error creating user');
   }
 });

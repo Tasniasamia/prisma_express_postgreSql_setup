@@ -36,6 +36,7 @@ model user {
   is_deleted  Boolean?
   is_modified Boolean? @ignore
   otp         String
+  refreshToken String?
   @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
 }

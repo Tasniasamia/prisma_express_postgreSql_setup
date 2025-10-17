@@ -28,7 +28,6 @@ export const uploadCloudinary = async (localdirpath: string) => {
     const response = await cloudinary.uploader.upload(localdirpath, {
       resource_type: "auto",
     });
-   console.log("coming response",response)
     fs.unlinkSync(localdirpath); 
     return response;
   } catch (error) {
@@ -51,11 +50,9 @@ export const deleteImage:any = async (imagePath: string): Promise<boolean> => {
     const publicId = match ? match[1] : null;
 
     if (!publicId) {
-      console.warn("⚠️ Could not extract public_id from URL:", imagePath);
       return false;
     }
 
-    console.log("🗑️ Deleting Cloudinary image:", publicId);
     const result = await cloudinary.uploader.destroy(publicId);
 
     // যদি সফলভাবে delete হয়
@@ -63,12 +60,10 @@ export const deleteImage:any = async (imagePath: string): Promise<boolean> => {
       // "not found" মানে image আগেই delete হয়ে গেছে
       return true;
     } else {
-      console.error("❌ Cloudinary delete failed:", result);
       return false;
     }
 
   } catch (error: any) {
-    console.error("🔥 Error deleting image:", error?.message);
     return false;
   }
 };

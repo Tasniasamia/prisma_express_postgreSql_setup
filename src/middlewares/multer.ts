@@ -15,7 +15,6 @@ const storage = multer.diskStorage({
     // folder না থাকলে create করো
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
-      console.log("✅ Created upload folder:", uploadPath);
     }
 
     cb(null, uploadPath);

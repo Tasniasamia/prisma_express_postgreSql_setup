@@ -5,14 +5,26 @@ import { AuthService } from "./auth.service";
 import { successResponse } from "@/utils/successResponse";
 import { AppError } from "@/errors/appError";
 import { deleteImage, uploadCloudinary } from "@/utils/cloudinary";
-import { generateHashPassword } from "./auth.utils";
+import {
+  generateHashPassword,
+  generateRefreshToken,
+  generateToken,
+} from "./auth.utils";
 import { db } from "@/config/db";
 import { userService } from "../user/user.service";
+
+const parseTime = (value: string) => {
+  const time = parseInt(value);
+  if (value.includes("h")) return time * 60 * 60 * 1000;
+  if (value.includes("d")) return time * 24 * 60 * 60 * 1000;
+  if (value.includes("m")) return time * 60 * 1000;
+  if (value.includes("s")) return time * 1000;
+  return 0;
+};
 
 export class authController {
   static registrationController = catchAsync(
     async (req: Request, res: Response) => {
-      console.log("req?.file", req?.files);
       const {
         name,
         email,
@@ -44,8 +56,7 @@ export class authController {
         if (req.file?.path) {
           imageURL = await uploadCloudinary(req.file.path);
         }
-        console.log("image URL", imageURL);
-        console.log("req file path", req.file?.path);
+
         await AuthService.postUser({
           name,
           email,
@@ -73,41 +84,83 @@ export class authController {
     }
   );
 
+  static loginController = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { email, password, role } = req?.body;
+      const existUser = await userService.findUserByEmail(email);
+      if (!existUser || existUser?.role !== role) {
+        throw new AppError(400, "Invalid User", "Invalid User");
+      }
+      const token = await generateToken({ email, password, role });
+      const refreshToken = await generateRefreshToken({
+        email,
+        password,
+        role,
+      });
+      res.cookie("token", token, {
+        httpOnly: false,
+        secure: false,
+        sameSite: "lax",
+        maxAge: parseTime(process.env.EXPIREIN || "2h"),
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: false,
+        secure: false,
+        sameSite: "lax",
+        maxAge: parseTime(process.env.REFRESH_EXPIRY || "7d"),
+      });
+
+      const { success, statusCode, message, data } = successResponse(
+        "Login Successfully",
+        { refreshToken, token }
+      );
+      res.status(statusCode).json({ success, statusCode, message, data });
+    }
+  );
+
   static getprofileController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       const profile = await db.user.findFirst({
-        where: { id: req?.params?.id },
+        where: { email: req?.body?.decoded?.email },
+        omit: { password: true },
       });
-      return res.status(200).json({ data: profile });
+      if (!profile) {
+        throw new AppError(400, "Invalid User", "Invalid User");
+      }
+      const { success, statusCode, message, data } = successResponse(
+        "User get Successfully",
+        profile
+      );
+
+      return res.status(200).json({ success, statusCode, message, data });
     }
   );
   static updateProfileController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log("req.body", req.body);
-      const { email, image,password, ...updateData } = req.body;
+      const { email, decoded, otp, image, password, ...updateData } = req.body;
       const existingUser = await db.user.findFirst({
-        where: { email },
+        where: { email: decoded?.email },
       });
-      
+
       if (!existingUser) {
         throw new AppError(404, "User not found", "User not found");
       }
-  
+
       let imageURL;
       if (req.file?.path) {
         imageURL = await uploadCloudinary(req.file.path);
       }
-      
-  
+
       const updatedUser = await db.user.update({
         where: { id: existingUser.id },
-        omit:{password:true},
+        omit: { password: true },
         data: {
           ...updateData,
           image: imageURL?.url || existingUser.image,
         },
       });
-  
+
       return res.status(200).json({
         success: true,
         message: "Profile updated successfully",
@@ -115,12 +168,10 @@ export class authController {
       });
     }
   );
-  
+
   static deleteImageController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      console.log("first coming here");
       const { url } = await req.body;
-      console.log("url", await req.body);
 
       if (!url) {
         throw new AppError(400, "Missing required field", "URL not provided");

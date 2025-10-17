@@ -19,7 +19,6 @@ const globalErrorHandler: ErrorRequestHandler = (
     let errorMessage : string = 'Server Side error';
     let errorDetails: unknown = null;
     let success:boolean;
-    console.log("error",error);
     if (error instanceof ZodError) {
         const simplifiedError = handleZodError(error);
          success= simplifiedError?.success;
