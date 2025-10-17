@@ -84,7 +84,7 @@ export class authController {
   static updateProfileController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       console.log("req.body", req.body);
-      const { email, image, ...updateData } = req.body;
+      const { email, image,password, ...updateData } = req.body;
       const existingUser = await db.user.findFirst({
         where: { email },
       });
@@ -95,16 +95,16 @@ export class authController {
   
       let imageURL;
       if (req.file?.path) {
-        const uploadResult = await uploadCloudinary(req.file.path);
-        imageURL = uploadResult.secure_url; // ✅ শুধু secure_url রাখো
+        imageURL = await uploadCloudinary(req.file.path);
       }
       
   
       const updatedUser = await db.user.update({
         where: { id: existingUser.id },
+        omit:{password:true},
         data: {
           ...updateData,
-          image: imageURL || existingUser.image,
+          image: imageURL?.url || existingUser.image,
         },
       });
   
