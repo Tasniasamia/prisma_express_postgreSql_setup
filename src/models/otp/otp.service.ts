@@ -36,4 +36,16 @@ export class OTPService{
         }
         return false;
     }
+
+    static createOTP=async(data:any)=>{
+        const { identifier, otp, action } = data;
+        if (!identifier || !otp || !action) {
+          throw new AppError(400, "Missing Fields", "identifier, otp, and action are required");
+        }
+        const newOTP = await db.otp.create({
+            data: { identifier, otp, action },
+          });
+        return newOTP;
+       }
+
 }
