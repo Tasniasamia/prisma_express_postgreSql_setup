@@ -16,6 +16,7 @@ import { notFoundHandler } from "./middlewares/notFoundHandler"
 import { initCloudinary } from "./utils/cloudinary"
 import path from "path"
 import { fileURLToPath } from "url"
+import { molieController } from "./models/payment/test/molle"
   dotenv.config({path: './.env',});
   
   export const envMode = process.env.NODE_ENV?.trim() || 'development';
@@ -46,16 +47,9 @@ app.post('/', async (req, res) => {
 });
   
   
+/*Sending otp to email*/ 
   app.post('/send',async(req,res)=>{
-
-
-
-
-
-
-
-
-    /*using nodemailer*/
+  /*using nodemailer*/
     // const transporter =await  nodemailer.createTransport({
     //   host: "smtp.ethereal.email",
     //   port: 587,
@@ -84,6 +78,20 @@ app.post('/', async (req, res) => {
     // });
     res.status(200).send("ok");
   })
+/*payment api testing*/
+
+app.post('/payment',async(req,res)=>{
+  await molieController();
+  return res.status(200).json("coming molie")
+})
+
+
+
+
+
+
+
+
   app.get("*", (req, res) => {
     res.status(404).json({
       success: false,
