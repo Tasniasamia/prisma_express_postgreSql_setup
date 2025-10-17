@@ -170,7 +170,6 @@ export class authController {
 
           if (updated) break;
         } catch (err) {
-          // Skip tables without matching structure
           continue;
         }
       }
