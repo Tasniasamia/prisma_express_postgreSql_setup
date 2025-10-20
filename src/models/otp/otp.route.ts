@@ -5,5 +5,6 @@ import { OTPController } from "./otp.controller";
 
 const route=Router();
 route.post("/send",validate(otpValidate.otpSchemaValidation),OTPController.sendOTPController);
+route.post('/verify',validate(otpValidate.otpSchemaValidation),OTPController.verifyOTPController);
 
 export const otpRoutes:Router=route;

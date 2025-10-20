@@ -81,8 +81,8 @@ app.post('/', async (req, res) => {
 /*payment api testing*/
 
 app.post('/payment',async(req,res)=>{
-  await molieController();
-  return res.status(200).json("coming molie")
+  const moie=await molieController();
+  return res.status(200).json(moie)
 })
 
 

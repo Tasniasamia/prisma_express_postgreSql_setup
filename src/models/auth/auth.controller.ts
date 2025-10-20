@@ -100,10 +100,7 @@ export class authController {
         role,
       });
       await AuthService.updateUser(email,{refreshToken:refreshToken})
-      // await db.user.update({
-      //   where: { email },
-      //   data: { refreshToken },
-      // });
+     
         res.cookie("token", token, {
         httpOnly: false,
         secure: false,

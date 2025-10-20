@@ -20,5 +20,4 @@ route.get('/profile',isVerify,authController.getprofileController);
 route.put('/profile',upload.single('image'),isVerify,authController.updateProfileController);
 route.get('/refreshToken',authController.refreshTokenController);
 route.put('/resetPassword',isVerify,authController.resetPasswordController)
-
 export const authRoutes: Router = route;

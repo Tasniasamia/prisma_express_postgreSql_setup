@@ -142,4 +142,41 @@ export class OTPController {
       }
     }
   });
+  static verifyOTPController = catchAsync(async (req: Request, res: Response) => {
+    const { otp, identifier, action } = req.body;
+      if (!otp || !identifier || !action) {
+      throw new AppError(400, "All fields are required", "All fields are required");
+    }
+    if (action !== "signup") {
+      const isEmail = validateEmail(identifier);
+      const isEmailOtpEnabled = await OTPService.findByOtpVerificationTypeEmail();
+  
+      if (isEmail && !isEmailOtpEnabled) {
+        throw new AppError(
+          404,
+          "Invalid Access",
+          "OTP verification via email is currently disabled."
+        );
+      }
+    }
+  
+    const otpVerified = await OTPService.verifyOTP(identifier, action, otp);
+  
+    if (!otpVerified) {
+      throw new AppError(401, "Invalid OTP", "The provided OTP is incorrect or expired.");
+    }
+  
+    const { success, statusCode, message, data } = await successResponse(
+      "OTP Verified Successfully",
+      []
+    );
+  
+    return res.status(statusCode).json({
+      success,
+      statusCode,
+      message,
+      
+    });
+  });
+  
 }

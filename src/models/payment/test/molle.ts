@@ -1,7 +1,7 @@
 import { createMollieClient } from '@mollie/api-client';  // ✅ named import
 
 const mollieClient = createMollieClient({
-  apiKey:'test_PvWxzca3eTETNgqN2HD2QPj563FkNt',
+  apiKey:'test_VgFTCfrUHDthuyyfqM5qvDftrUaq5R',
 });
 
 export const molieController = async () => {
@@ -9,7 +9,7 @@ export const molieController = async () => {
     const payment = await mollieClient.payments.create({
       amount: {
         currency: 'EUR',
-        value: '10.00',
+        value: '50.00',
       },
       description: 'My first local test payment',
       redirectUrl: 'http://localhost:4000/payment/success',
@@ -22,8 +22,10 @@ export const molieController = async () => {
     console.log('✅ Payment created successfully!');
     console.log('🧾 Payment ID:', payment.id);
     console.log('🔗 Checkout URL:', payment);
+    console.log('🔗 Checkout URL:', payment?._links.checkout?.href);
 
-    return payment;
+
+    return payment?._links.checkout?.href;
   } catch (error: any) {
     console.error('❌ Mollie Error:', error.message || error);
     throw error;

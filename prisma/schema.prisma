@@ -17,6 +17,7 @@ datasource db {
 enum Role {
   ADMIN @map("admin")
   USER  @map("user")
+  TEACHER @map("teacher")
 }
 
 model user {

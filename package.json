@@ -38,6 +38,7 @@
   "multer": "^2.0.2",
   "nodemailer": "^7.0.9",
   "resend": "^6.1.2",
+  "use-timer": "^2.0.1",
   "zod": "^4.1.12"
  },
  "devDependencies": {
