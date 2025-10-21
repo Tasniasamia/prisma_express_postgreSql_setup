@@ -101,3 +101,39 @@ model otp {
   otp        String
   createdAt  DateTime @default(now())
 }
+
+enum Jobtype{
+  REMOTE
+  HYBRID
+  ONSITE
+}
+model Job{
+    id         String   @id @default(uuid())
+    title String
+    company_name String
+    job_position String
+    category JobCategory[] @relation("jobCategory")
+    vacancy Int?
+    job_context String?
+    job_responsibility String?
+    educational_requirement String?
+    additional_requirements String?
+    salary Int?
+    deadLine DateTime?
+    status Boolean
+    jobType Jobtype @default(ONSITE)
+    author_name String
+    job_location String?
+    createdAt         DateTime @default(now())
+
+}
+model JobCategory{
+    id         String   @id @default(uuid())
+    name String
+    description String?
+    status Boolean
+    categoryId String @unique
+    Job Job? @relation("jobCategory",fields: [categoryId],references: [id],onUpdate: Cascade,onDelete: Cascade)
+    createdAt         DateTime @default(now())
+
+}
