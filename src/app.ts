@@ -1,5 +1,5 @@
 
-import express from "express"
+import express, { Request, Response } from "express"
 import helmet from "helmet"
 import cors from 'cors'
 import morgan from "morgan"
@@ -17,6 +17,12 @@ import { initCloudinary } from "./utils/cloudinary"
 import path from "path"
 import { fileURLToPath } from "url"
 import { molieController } from "./models/payment/test/molle"
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
   dotenv.config({path: './.env',});
   
   export const envMode = process.env.NODE_ENV?.trim() || 'development';
@@ -35,8 +41,19 @@ app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 app.use(cors({ origin: '*', credentials: true }));
 
-app.use(...middleware); 
+app.use(middleware); 
 app.use('/api/v1',route);
+
+// app.use('/public', express.static(path.join(__dirname, "../../public")));
+app.use("/public", express.static(path.join(process.cwd(), "public")));
+
+app.get('/', (req: Request, res: Response): void => {
+  res.status(200).json({
+    success: true,
+    message: "You're Welcome to My App💥",
+  });
+});
+
 app.post('/', async (req, res) => {
   try {
     
