@@ -20,8 +20,10 @@ export class SettingService {
   }
 
   static postAndUpdateSettings = async (payload: settingsType) => {
+    if ('decoded' in payload) delete payload.decoded;
+
     const settingsData = await this.findSettings();
-    const { email_config, cloud_config, ...rest } = payload;
+    const { email_config,cloud_config, ...rest } = payload;
     const emailData = email_config?.resend
       ? {
           resend_api_key: email_config.resend.api_key,

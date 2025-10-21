@@ -27,6 +27,7 @@ const parseTime = (value: string) => {
 export class authController {
   static registrationController = catchAsync(
     async (req: Request, res: Response) => {
+      console.log("coming here",);
       const {
         name,
         email,

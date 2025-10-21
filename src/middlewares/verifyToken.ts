@@ -62,15 +62,15 @@ export const isVerifyUser = (
   }
 };
 
-export const isVerifyAdmin = (
+export const isVerifyAdmin = async(
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const decoded = verifyCookies(req);
-
-    if (decoded.role !== "ADMIN") {
+    const decoded = await verifyCookies(req);
+   console.log("decoded",decoded);
+    if (decoded?.role !== "ADMIN") {
       throw new AppError(403, "Forbidden", "Admin access only");
     }
 

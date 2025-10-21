@@ -6,9 +6,10 @@ import { successResponse } from "@/utils/successResponse";
 export class settingController {
   static postSettingController = catchAsync(
     async (req: Request, res: Response) => {
+      
       await SettingService.postAndUpdateSettings(req?.body);
       const { success, statusCode, message, data } = await successResponse(
-        "Settings created Successfully",
+        req?.body?.id?"Settings Updated Succcessfully":"Settings created Successfully",
         {}
       );
       return await res

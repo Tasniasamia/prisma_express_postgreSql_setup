@@ -83,7 +83,7 @@ export const settingSchemaValidation = z.object({
   site_address: z.string().max(500).optional(),
   site_description: z.string().max(2000).optional(),
   site_footer: z.string().max(1000).optional(),
-
+  decoded: z.any().optional(),
   client_side_url: z.string().url().optional(),
   server_side_url: z.string().url().optional(),
 

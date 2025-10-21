@@ -12,8 +12,7 @@ export const initCloudinary = async () => {
   if (!environmentVariable?.cloud_config) {
     throw new AppError(400,'Cloudinary configuration not found in database.',"Cloudinary configuration not found in database.");
   }
-
-  cloudinary.config({
+   cloudinary.config({
     cloud_name: environmentVariable.cloud_config.cloud_name,
     api_key: environmentVariable.cloud_config.api_key,
     api_secret: environmentVariable.cloud_config.api_secret,
@@ -24,15 +23,14 @@ export const initCloudinary = async () => {
 export const uploadCloudinary = async (localdirpath: string) => {
   try {
     if (!localdirpath) return null;
-  
     const response = await cloudinary.uploader.upload(localdirpath, {
       resource_type: "auto",
     });
     fs.unlinkSync(localdirpath); 
     return response;
-  } catch (error) {
-    if (fs.existsSync(localdirpath)) fs.unlinkSync(localdirpath);
-    throw error;
+  } catch (error: any) {
+   if (fs.existsSync(localdirpath)) fs.unlinkSync(localdirpath);
+    throw new AppError(400,error?.message ,error?.message);
   }
 };
 
@@ -64,6 +62,8 @@ export const deleteImage:any = async (imagePath: string): Promise<boolean> => {
     }
 
   } catch (error: any) {
+    throw new AppError(400,error?.message ,error?.message);
+
     return false;
   }
 };
