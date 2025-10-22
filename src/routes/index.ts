@@ -1,4 +1,5 @@
 import { authRoutes } from "@/models/auth/auth.route";
+import { JobCategoryRoutes } from "@/models/job-category/job-category.route";
 import { otpRoutes } from "@/models/otp/otp.route";
 import { languageRoutes } from "@/models/setting-language/setting.language.route";
 import { settingRoute } from "@/models/settings/settings.route";
@@ -27,6 +28,10 @@ import { Router } from "express";
     {
         path:'/language',
         routes:languageRoutes
+    },
+    {
+        path:"/job-category",
+        routes:JobCategoryRoutes,
     }
 ]
 allRoutes?.forEach((i,index)=>{
