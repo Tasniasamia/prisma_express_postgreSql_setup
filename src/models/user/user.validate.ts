@@ -25,7 +25,7 @@ const registrationSchemaValidation = z.object({
     .nonempty("password is required"),
     image: z.string().url("Image must be a valid URL").optional(),
     otp:z.string().nonempty('OTP is required'),
-    role: z.enum(["USER", "ADMIN"]),
+    role: z.enum(["user", "admin","teacher"]),
     phone:z.string({message:"phone number is required"}).optional(),
     country: z.string().max(100, "Country name is too long").optional(),
   

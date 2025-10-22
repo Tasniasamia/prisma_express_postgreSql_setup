@@ -15,6 +15,7 @@ export class globalService {
     data,
     model,
   }: createDocumentOptions<T, D>): Promise<T> => {
+
     const createdDoc = await (db as any)[model].create({data:data});
     const findDoc = await (db as any)[model].findUnique({
       where: { id: createdDoc?.id },
@@ -49,7 +50,7 @@ export class globalService {
     data,
     model,
   }: updateDocumentOptions<T, D>): Promise<T> => {
-    const updateDoc = await (db as any)[model].findUnique({
+    const updateDoc = await (db as any)[model].update({
       where: { id: id },
       data: data,
     });
@@ -59,7 +60,7 @@ export class globalService {
     id,
     model,
   }: deleteDocumentOptions<T>): Promise<T> => {
-    const deleteDoc = await (db as any)[model].delete({ where: { id: id } });
+    const deleteDoc = await (db as any)[model].delete({ where: {id:id} });
     return deleteDoc;
   };
   static findDocuments = async <T>({

@@ -143,8 +143,9 @@ model language{
   name String
   code String
   rtl Boolean?
+  flag String?
   translations Json?
   active Boolean?
   default Boolean?
-    createdAt         DateTime @default(now())
+  createdAt         DateTime @default(now())
 }

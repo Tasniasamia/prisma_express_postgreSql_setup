@@ -7,33 +7,36 @@ import { SettingLanguageService } from "./setting.language.service";
 
 export class SettingLanguageController {
   static postLanguage = catchAsync(async (req: Request, res: Response) => {
-    const { name, code, rtl, translations, active } = await req.body;
-    const language = await SettingLanguageService.findLanguageByName(name);
-    if (language) {
-      throw new AppError(400, "Something went wrong", "Language already exist");
+    console.log("req?.body",req?.body);
+    const { name,flag, code, rtl, translations, active } = await req.body;
+    const language = await SettingLanguageService.findLanguageByName(name,false);
+    if(language){
+        throw new AppError(400, "Something went wrong", "language already exist");
+
     }
     if (req.body?.default) {
-      await SettingLanguageService.updateManyLanguage({}, { default: false });
-    }
-    const data = await globalService.createDocument(req?.body);
-    return res.status(200).json({
-      statusCode: 200,
-      success: true,
-      message: "Language created successfully",
-      data: data,
-    });
+        await SettingLanguageService.updateManyLanguage({}, { default: false });
+      }
+      const data = await globalService.createDocument( {data:req?.body,model:'language'});
+      return res.status(200).json({
+        statusCode: 200,
+        success: true,
+        message: "Language created successfully",
+        data: data,
+      });
   });
 
   static updateLanage = catchAsync(async (req: Request, res: Response) => {
-    const { name, code, rtl, translations, active } = await req.body;
-    const language = await SettingLanguageService.findLanguageByName(name);
+    const {id, name, code, rtl, translations, active } = await req.body;
+    console.log("req?.body update",await req?.body)
+    const language = await SettingLanguageService.findLanguageById(id);
     if (req.body?.default) {
       await SettingLanguageService.updateManyLanguage({}, { default: false });
     }
     const updateLanguage = await globalService.updateDocument({
-      id: req.body.id,
-      data: req.body,
-      model: "language",
+      id:id,
+      data:await req.body,
+      model:'language',
     });
     return res.status(200).json({
       statusCode: 200,
@@ -52,12 +55,12 @@ export class SettingLanguageController {
       const localFields =
         typeof fields === "string"
           ? fields.split(",").join(" ")
-          : "name code flag default translations";
+          : "id name code flag default active translations";
 
       const filter = { active: true };
 
       if (query?._id) {
-        data = await SettingLanguageService.findLanguageById(query?._id);
+        data = await SettingLanguageService.findLanguageById(query?.id);
       } else {
         data = await SettingLanguageService.findLanguageListByQuery(
           filter,
@@ -82,10 +85,10 @@ export class SettingLanguageController {
       const localFields =
         typeof fields === "string"
           ? fields.split(",").join(" ")
-          : "-updatedAt -__v";
+          : "id name code flag default active translations";
       const filter = {};
       if (query?._id) {
-        data = await SettingLanguageService.findLanguageById(query?._id);
+        data = await SettingLanguageService.findLanguageById(query?.id);
       } else {
         data = await SettingLanguageService.findLanguageListByQuery(
           filter,
@@ -101,7 +104,8 @@ export class SettingLanguageController {
     }
   );
   static deleteLanguageSetting=catchAsync(async(req:Request,res:Response)=>{
-    const {id}=await req?.body;
+    const id=req?.query?.id as string
+    console.log("delete id ",id);
     const data=await globalService.deleteDocument({id:id,model:'language'});
     if(data){
         return res.status(200).json({

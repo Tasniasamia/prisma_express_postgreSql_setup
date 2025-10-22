@@ -2,10 +2,13 @@ import { db } from "@/config/db";
 import { AppError } from "@/errors/appError";
 
 export class SettingLanguageService {
-  static findLanguageByName = async (name: string) => {
+  static findLanguageByName = async (name: string,shouldExist:boolean) => {
     let language = await db.language.findFirst({ where: { name: name } });
-    if (!language) {
+    if (!language && shouldExist) {
       throw new AppError(400, "Something went wrong", "language doesn't exist");
+    }
+    if(language && !shouldExist){
+        throw new AppError(400, "Something went wrong", "language already exist");
     }
     return language;
   };
@@ -25,12 +28,10 @@ export class SettingLanguageService {
    throw new AppError(400, "Something went wrong", "Language update failed");
   }
   static updateManyLanguage = async (query: any, data: any) => {
-    let language = await db.language.findMany({ where: query });
-    if (language.length>0) {
-      let language = await db.language.updateMany({ where: query, data: data });
+  
+      let language = await db.language.updateMany({ where: query || {}, data: data });
       return language;
-    }
-   throw new AppError(400, "Something went wrong", "All language update failed");
+    
   }
   static async findLanguageListByQuery(
     filter: Record<string, any>,
@@ -47,12 +48,12 @@ export class SettingLanguageService {
   
     // Prisma query
     const languages = await db.language.findMany({
-      where: filter,
-      select: selectFields,
+      where: filter || {},
+      select: selectFields || {},
     });
   
     if (!languages?.length) {
-      throw new AppError(404, "Request Failed", "Language not found!");
+      return []
     }
   
     return languages;

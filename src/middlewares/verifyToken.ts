@@ -47,7 +47,7 @@ export const isVerifyUser = (
   try {
     const decoded = verifyCookies(req);
 
-    if (decoded.role !== "USER" && decoded.role !== "ADMIN") {
+    if (decoded.role.toUpperCase() !== "USER" && decoded.role.toUpperCase() !== "ADMIN") {
       throw new AppError(403, "Forbidden", "User not authorized");
     }
 
@@ -69,8 +69,8 @@ export const isVerifyAdmin = async(
 ) => {
   try {
     const decoded = await verifyCookies(req);
-   console.log("decoded",decoded);
-    if (decoded?.role !== "ADMIN") {
+    
+    if (decoded?.role.toUpperCase() !== "ADMIN") {
       throw new AppError(403, "Forbidden", "Admin access only");
     }
 

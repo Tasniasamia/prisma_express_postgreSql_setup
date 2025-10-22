@@ -66,7 +66,7 @@ export class authController {
           password: hashPassword,
           image: imageURL?.url,
           phone,
-          role,
+          role:role?.toUpperCase(),
           country,
           city,
           state,
@@ -91,14 +91,14 @@ export class authController {
     async (req: Request, res: Response, next: NextFunction) => {
       const { email, password, role } = req?.body;
       const existUser = await userService.findUserByEmail(email);
-      if (!existUser || existUser?.role !== role) {
+      if (!existUser || existUser?.role.toUpperCase() !== role?.toUpperCase()) {
         throw new AppError(400, "Invalid User", "Invalid User");
       }
-      const token = await generateToken({ email, password, role });
+      const token = await generateToken({ email, password, role:role?.toUpperCase() });
       const refreshToken = await generateRefreshToken({
         email,
         password,
-        role,
+        role:role?.toUpperCase(),
       });
       await AuthService.updateUser(email,{refreshToken:refreshToken})
      
@@ -273,7 +273,7 @@ export class authController {
         throw new AppError(401, "Invalid Refresh Token", "Token mismatch");
       }
   
-      const payload = { id: user.id, email: user.email,password:user?.password, role: user.role };
+      const payload = { id: user.id, email: user.email,password:user?.password, role: user.role?.toUpperCase() };
       const newAccessToken = await generateToken(payload);
       const newRefreshToken = await generateRefreshToken(payload);
       await AuthService.updateUser(user?.email,{ refreshToken: newRefreshToken })
@@ -294,7 +294,7 @@ export class authController {
           successResponse("Token refreshed successfully", {
             accessToken: newAccessToken,
             refreshToken: newRefreshToken,
-            user: { id: user.id, email: user.email, role: user.role },
+            user: { id: user.id, email: user.email, role: user.role.toUpperCase() },
           })
         );
     } catch (error: any) {

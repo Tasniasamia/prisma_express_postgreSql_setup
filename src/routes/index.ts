@@ -1,5 +1,6 @@
 import { authRoutes } from "@/models/auth/auth.route";
 import { otpRoutes } from "@/models/otp/otp.route";
+import { languageRoutes } from "@/models/setting-language/setting.language.route";
 import { settingRoute } from "@/models/settings/settings.route";
 import { userRoutes } from "@/models/user/user.route";
 import { Router } from "express";
@@ -22,6 +23,10 @@ import { Router } from "express";
     {
         path:'/auth',
         routes:authRoutes
+    },
+    {
+        path:'/language',
+        routes:languageRoutes
     }
 ]
 allRoutes?.forEach((i,index)=>{

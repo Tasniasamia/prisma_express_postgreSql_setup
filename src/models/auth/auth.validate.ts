@@ -20,7 +20,7 @@ const loginSchemaValidation = z.object({
       "Password must contain at least one special character"
     )
     .nonempty("password is required"),
-    role: z.enum(["USER", "ADMIN"]),
+    role: z.enum(["user", "admin","teacher"]),
 
 });
 export type loginInput = z.infer<typeof loginSchemaValidation>;
