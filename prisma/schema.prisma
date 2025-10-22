@@ -137,3 +137,14 @@ model JobCategory{
     createdAt         DateTime @default(now())
 
 }
+
+model language{
+  id String @id @default(uuid())
+  name String
+  code String
+  rtl Boolean?
+  translations Json?
+  active Boolean?
+  default Boolean?
+    createdAt         DateTime @default(now())
+}

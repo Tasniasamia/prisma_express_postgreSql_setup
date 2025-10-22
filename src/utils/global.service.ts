@@ -15,7 +15,7 @@ export class globalService {
     data,
     model,
   }: createDocumentOptions<T, D>): Promise<T> => {
-    const createdDoc = await (db as any)[model].create(data);
+    const createdDoc = await (db as any)[model].create({data:data});
     const findDoc = await (db as any)[model].findUnique({
       where: { id: createdDoc?.id },
     });
