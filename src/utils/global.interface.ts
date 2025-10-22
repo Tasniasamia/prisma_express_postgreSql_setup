@@ -12,3 +12,38 @@ export interface existDocumentOptions{
     errorMessages?:string,
     include:any
 }
+export interface updateDocumentOptions<TData,TModel>{
+    id:string,
+    data:TData,
+    model:TModel
+}
+export interface deleteDocumentOptions<TModel>{
+    id:string,
+    model:TModel
+}
+export interface findDocumentOptions<TModel>{
+ model:TModel,
+ filter:any,
+ single:boolean,
+ include:any,
+ select:any,
+
+}
+
+export interface getDocuments<TModel>{
+    model:TModel,
+    filter:any,
+    include:any,
+    query:any,
+    select:any
+}
+
+export interface getDocumentsOptions<T> {
+    model: string;
+    filter?: any;
+    include?: any;
+    select?: any;
+    page?: number;
+    limit?: number;
+    search?: string;
+  }
