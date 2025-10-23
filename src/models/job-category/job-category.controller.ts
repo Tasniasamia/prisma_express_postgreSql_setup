@@ -27,9 +27,9 @@ export class JobCategoryController{
         const OR : any[]= Object.entries(name).map(([key,value])=>
         ({name:{path:[key] , equals:value}}))
         const query={OR}
-        const existCategory=await globalService.existDocument({query:query,model:'JobCategory',shouldExist:false,isError:true,errorMessages:"",include:true});
+        const existCategory=await globalService.existDocument({query:query,model:'JobCategory',shouldExist:true,isError:false,errorMessages:"",include:true});
         const updateCategory=await globalService.updateDocument({id:payload?.id,data:payload,model:'JobCategory'});
-        if(updateCategory){
+         if(updateCategory){
             return res.status(200).json({success:true,statusCode:200,message:"Job Category updated successfully"})
 
         }
@@ -76,7 +76,44 @@ export class JobCategoryController{
         });
       });
       
-
+      static findJobCategoryController = catchAsync(async (req: Request, res: Response) => {
+        const { page = "1", limit = "8", search = "", langCode = "en" } = req.query as any;
+        const OR: any[] = search
+          ? [
+              {
+                [`name.${langCode}`]: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+              {
+                [`description.${langCode}`]: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            ]
+          : [];
+      
+        const where: any = {
+          ...(OR.length ? { OR } : {}), 
+        };
+      
+        const data = await globalService.getDocuments({
+          model: "JobCategory",
+          filter: where,
+          include: {},
+          select: {},
+          page: parseInt(page),
+          limit: parseInt(limit),
+        });
+      
+        res.status(200).json({
+          success: true,
+          message: "Job categories fetched successfully",
+          data,
+        });
+      });
 
 
 

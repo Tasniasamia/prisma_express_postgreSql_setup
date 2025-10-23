@@ -54,6 +54,7 @@ export class globalService {
       where: { id: id },
       data: data,
     });
+    console.log("updateDoc",updateDoc);
     return updateDoc;
   };
   static deleteDocument = async <T>({

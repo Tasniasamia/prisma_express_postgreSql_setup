@@ -19,5 +19,6 @@ router.put(
     JobCategoryController.updateJobCategoryController
 )
 router.get('/',JobCategoryController.findJobCategoryControllerPublic)
+router.get('/admin',isVerifyAdmin,JobCategoryController.findJobCategoryController)
 
 export const JobCategoryRoutes: Router = router;

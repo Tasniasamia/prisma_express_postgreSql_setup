@@ -1,5 +1,5 @@
 import { languageEnum } from "@/utils/constants";
-import z, { object } from "zod";
+import z from "zod";
 
 const jobCatgorySchemaValidation = z.object({
   name: z.record(z.string(),z.string()).refine((val) => {
@@ -17,7 +17,7 @@ const jobCatgorySchemaValidation = z.object({
 
 },  { message: "Invalid language key in name field" }
 ),
-  active: z.boolean({
+  status: z.boolean({
     message: "active is required",
   }).default(true),
 });
@@ -29,6 +29,7 @@ export const jobCategoryValidate = {
 
 
 const updatejobCatgorySchemaValidation = z.object({
+  id:z.string(),
   name: z.record(z.string(),z.string()).refine((val) => {
         console.log("val",val);
       return Object.keys(val).every((t) => 
@@ -44,9 +45,9 @@ const updatejobCatgorySchemaValidation = z.object({
 
 },  { message: "Invalid language key in name field" }
 ),
-  active: z.boolean({
+  status: z.boolean({
     message: "active is required",
-  }).default(true),
+  }),
 });
 export type updatejobCategoryInput = z.infer<typeof updatejobCatgorySchemaValidation>;
 export const updatejobCategoryValidate = {

@@ -89,7 +89,7 @@ model JobCategory{
     id         String   @id @default(uuid())
     name Json
     description Json?
-    status Boolean
+    status Boolean 
     job Job? 
     createdAt         DateTime @default(now())
 
