@@ -121,6 +121,6 @@ export class globalService {
     });
   
     return docs;
-  }
+  };
   
 }
