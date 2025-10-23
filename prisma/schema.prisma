@@ -1,3 +1,4 @@
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -84,36 +85,37 @@ enum Jobtype{
   HYBRID
   ONSITE
 }
-// model Job{
-//     id         String   @id @default(uuid())
-//     title String
-//     company_name String
-//     job_position String
-//     category JobCategory[] @relation("jobCategory")
-//     vacancy Int?
-//     job_context String?
-//     job_responsibility String?
-//     educational_requirement String?
-//     additional_requirements String?
-//     salary Int?
-//     deadLine DateTime?
-//     status Boolean
-//     jobType Jobtype @default(ONSITE)
-//     author_name String
-//     job_location String?
-//     createdAt         DateTime @default(now())
-
-// }
 model JobCategory{
     id         String   @id @default(uuid())
     name Json
     description Json?
     status Boolean
-    // categoryId String @unique
-    // Job Job? @relation("jobCategory",fields: [categoryId],references: [id],onUpdate: Cascade,onDelete: Cascade)
+    job Job? 
     createdAt         DateTime @default(now())
 
 }
+model Job{
+    id         String   @id @default(uuid())
+    title Json
+    company_name Json
+    job_position Json
+    categoryId String @unique
+    category JobCategory? @relation(fields: [categoryId],references: [id],onUpdate: Cascade,onDelete: Cascade)
+    vacancy Int?
+    job_context Json?
+    job_responsibility Json?
+    educational_requirement Json?
+    additional_requirements Json?
+    salary Int?
+    deadLine DateTime?
+    status Boolean
+    jobType Jobtype @default(ONSITE)
+    author_name Json
+    job_location Json?
+    createdAt         DateTime @default(now())
+
+}
+
 
 model language{
   id String @id @default(uuid())

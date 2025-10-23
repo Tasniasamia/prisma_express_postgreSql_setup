@@ -93,34 +93,33 @@ export class globalService {
     filter = {},
     include,
     select,
-    page,
-    limit,
-    search,
+    page = 1,
+    limit = 8,
+    search = {},
   }: getDocumentsOptions<T>): Promise<any> {
     const prismaModel = (db as any)[model];
     if (!prismaModel) throw new Error(`Model '${model}' not found`);
-
-    let where = { ...filter };
-    if (search) {
-      where = {
-        ...where,
-        OR: [
-          { title: { contains: search, mode: "insensitive" } },
-          { content: { contains: search, mode: "insensitive" } },
-        ],
-      };
+    let where: any = { ...filter };
+    if (search && Object.keys(search).length > 0) {
+      if (search.OR || search.AND) {
+        where = { ...where, ...search };
+      } else {
+        where = { ...where, ...search };
+      }
     }
 
     if (page && limit) {
       return await pagination<T>(model, page, limit, where, include, select);
     }
-
+  
     const docs = await prismaModel.findMany({
       where,
       include,
       select,
       orderBy: { createdAt: "desc" },
     });
-
+  
     return docs;
-  }}
+  }
+  
+}

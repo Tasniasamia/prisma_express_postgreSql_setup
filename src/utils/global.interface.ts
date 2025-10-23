@@ -44,5 +44,5 @@ export interface getDocumentsOptions<T> {
     select?: any;
     page?: number;
     limit?: number;
-    search?: string;
+    search?: any;
   }

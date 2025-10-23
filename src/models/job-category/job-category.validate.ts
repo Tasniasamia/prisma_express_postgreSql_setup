@@ -25,3 +25,30 @@ export type jobCategoryInput = z.infer<typeof jobCatgorySchemaValidation>;
 export const jobCategoryValidate = {
   jobCatgorySchemaValidation,
 };
+
+
+
+const updatejobCatgorySchemaValidation = z.object({
+  name: z.record(z.string(),z.string()).refine((val) => {
+        console.log("val",val);
+      return Object.keys(val).every((t) => 
+        languageEnum?.options?.includes(t as any)
+      )
+    },      { message: "Invalid language key in name field" }
+),
+  description:  z.record(z.string(),z.string()).refine((val) => {
+    console.log("val",val);
+ return Object.keys(val).every((t) => 
+    languageEnum?.options?.includes(t as any)
+  )
+
+},  { message: "Invalid language key in name field" }
+),
+  active: z.boolean({
+    message: "active is required",
+  }).default(true),
+});
+export type updatejobCategoryInput = z.infer<typeof updatejobCatgorySchemaValidation>;
+export const updatejobCategoryValidate = {
+  updatejobCatgorySchemaValidation,
+};

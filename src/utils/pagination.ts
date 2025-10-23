@@ -28,15 +28,23 @@ export const pagination = async <T>(
 
   const skip = (page - 1) * limit;
 
+  // ✅ Build query options safely
+  const queryOptions: any = {
+    where: filter,
+    skip,
+    take: limit,
+    orderBy: { createdAt: "desc" },
+  };
+
+  if (include && Object.keys(include).length > 0) {
+    queryOptions.include = include;
+  } else if (select && Object.keys(select).length > 0) {
+    queryOptions.select = select;
+  }
+
+  // ✅ Fetch data and count
   const [docs, totalDocs] = await Promise.all([
-    prismaModel.findMany({
-      where: filter,
-      include,
-      select,
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
-    }),
+    prismaModel.findMany(queryOptions),
     prismaModel.count({ where: filter }),
   ]);
 
