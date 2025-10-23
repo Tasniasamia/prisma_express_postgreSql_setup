@@ -108,6 +108,7 @@ model Job{
     author_name Json
     job_location Json?
     createdAt         DateTime @default(now())
+    applyJob applyJob[]
 
 }
 
@@ -122,4 +123,16 @@ model language{
   active Boolean?
   default Boolean?
   createdAt         DateTime @default(now())
+}
+model applyJob{
+    id String @id @default(uuid())
+    name String
+    email String?
+    phone String
+    cover_letter String?
+    resume String?
+    JobId String
+    Job Job @relation(fields: [JobId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+    createdAt         DateTime @default(now())
+
 }

@@ -1,3 +1,4 @@
+import { ApplyJobRoutes } from "@/models/applyJob/apply.job.route";
 import { authRoutes } from "@/models/auth/auth.route";
 import { JobCategoryRoutes } from "@/models/job-category/job-category.route";
 import { JobRoutes } from "@/models/job/job.route";
@@ -37,6 +38,10 @@ import { Router } from "express";
     {
         path:'/job',
         routes:JobRoutes,
+    },
+    {
+        path:'/applyJob',
+        routes:ApplyJobRoutes
     }
 ]
 allRoutes?.forEach((i,index)=>{
