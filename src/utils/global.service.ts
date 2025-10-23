@@ -97,6 +97,7 @@ export class globalService {
     page = 1,
     limit = 8,
     search = {},
+    omit={}
   }: getDocumentsOptions<T>): Promise<any> {
     const prismaModel = (db as any)[model];
     if (!prismaModel) throw new Error(`Model '${model}' not found`);
@@ -115,6 +116,7 @@ export class globalService {
   
     const docs = await prismaModel.findMany({
       where,
+      omit,
       include,
       select,
       orderBy: { createdAt: "desc" },

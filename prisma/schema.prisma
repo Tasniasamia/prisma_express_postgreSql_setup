@@ -1,4 +1,5 @@
 
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -39,9 +40,45 @@ model user {
   is_modified Boolean? @ignore
   otp         String
   refreshToken String?
+  createdAt    DateTime  @default(now())
+
   @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
+
 }
+
+model Coursecategory {
+  id    String    @id @default(uuid())
+  name  String
+  image Json?
+  Course Course[]
+    createdAt         DateTime @default(now())
+
+}
+model Course {
+  id           Int       @id @default(autoincrement())
+  name         String?
+  price        Float?
+  rate         Float?
+  description  String?   @db.VarChar(10000)
+  duration     String?
+  time         String?
+  days         Json? // JSON type
+  place        String?
+  createdAt    DateTime  @default(now())
+  sit          Int?
+  enrollment   Int?
+  status       Boolean   @default(true)
+  image        Json?
+  category     Coursecategory? @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  categoryId   String?      
+ 
+
+}
+
+
+
+
 
 model Setting {
   id                    String  @id @default(uuid())

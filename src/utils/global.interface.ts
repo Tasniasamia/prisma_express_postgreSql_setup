@@ -34,7 +34,9 @@ export interface getDocuments<TModel>{
     filter:any,
     include:any,
     query:any,
-    select:any
+    select:any,
+    omit?:any
+
 }
 
 export interface getDocumentsOptions<T> {
@@ -45,4 +47,5 @@ export interface getDocumentsOptions<T> {
     page?: number;
     limit?: number;
     search?: any;
+    omit?:any
   }

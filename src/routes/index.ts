@@ -5,6 +5,7 @@ import { JobRoutes } from "@/models/job/job.route";
 import { otpRoutes } from "@/models/otp/otp.route";
 import { languageRoutes } from "@/models/setting-language/setting.language.route";
 import { settingRoute } from "@/models/settings/settings.route";
+import { teacherRoutes } from "@/models/teacher/teacher.route";
 import { userRoutes } from "@/models/user/user.route";
 import { Router } from "express";
 
@@ -42,6 +43,10 @@ import { Router } from "express";
     {
         path:'/applyJob',
         routes:ApplyJobRoutes
+    },
+    {
+        path:'/teacher',
+        routes:teacherRoutes
     }
 ]
 allRoutes?.forEach((i,index)=>{

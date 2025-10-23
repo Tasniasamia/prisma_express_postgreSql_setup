@@ -56,7 +56,7 @@ export class authController {
         const hashPassword = await generateHashPassword(password);
         let imageURL;
         if (req.file?.path) {
-          imageURL = await uploadCloudinary(req.file.path);
+          imageURL = await uploadCloudinary(req.file.path,'image');
         }
 
         await AuthService.postUser({
@@ -151,7 +151,7 @@ export class authController {
 
       let imageURL;
       if (req.file?.path) {
-        imageURL = await uploadCloudinary(req.file.path);
+        imageURL = await uploadCloudinary(req.file.path,'image');
       }
 
       const updatedUser = await db.user.update({
