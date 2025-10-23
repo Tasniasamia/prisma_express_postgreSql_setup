@@ -20,5 +20,5 @@ router.put(
 )
 router.get('/',JobCategoryController.findJobCategoryControllerPublic)
 router.get('/admin',isVerifyAdmin,JobCategoryController.findJobCategoryController)
-
+router.delete('/',isVerifyAdmin,JobCategoryController.deleteController)
 export const JobCategoryRoutes: Router = router;

@@ -70,7 +70,7 @@ export const settingSchemaValidation = z.object({
   decoded: z.any().optional(),
   client_side_url: z.string().url().optional(),
   server_side_url: z.string().url().optional(),
-
+  uploadType:z.string().optional(),
 
   stripe: stripeSchema,
   paypal: paypalSchema,

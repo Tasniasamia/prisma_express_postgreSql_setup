@@ -54,7 +54,7 @@ model Setting {
   site_footer           String?
   client_side_url       String?
   server_side_url       String?
-
+ uploadType         String?
 
 
   stripe            Json?

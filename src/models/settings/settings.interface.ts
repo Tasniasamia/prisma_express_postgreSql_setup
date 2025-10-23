@@ -8,7 +8,7 @@ type settingsType = {
   site_footer?: string;
   client_side_url?: string;
   server_side_url?: string;
-
+  uploadType?:string;
   stripe?: {
     credentials: {
       stripe_publishable_key: string;
