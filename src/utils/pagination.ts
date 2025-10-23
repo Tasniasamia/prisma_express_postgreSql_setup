@@ -28,7 +28,6 @@ export const pagination = async <T>(
 
   const skip = (page - 1) * limit;
 
-  // ✅ Build query options safely
   const queryOptions: any = {
     where: filter,
     skip,
@@ -42,7 +41,6 @@ export const pagination = async <T>(
     queryOptions.select = select;
   }
 
-  // ✅ Fetch data and count
   const [docs, totalDocs] = await Promise.all([
     prismaModel.findMany(queryOptions),
     prismaModel.count({ where: filter }),
