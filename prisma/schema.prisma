@@ -85,7 +85,7 @@ model JobCategory{
     name Json
     description Json?
     status Boolean 
-    job Job? 
+    job Job[]
     createdAt         DateTime @default(now())
 
 }
@@ -94,8 +94,8 @@ model Job{
     title Json
     company_name Json
     job_position Json
-    categoryId String @unique
-    category JobCategory? @relation(fields: [categoryId],references: [id],onUpdate: Cascade,onDelete: Cascade)
+    categoryId String 
+    category JobCategory @relation(fields: [categoryId],references: [id],onUpdate: Cascade,onDelete: Cascade)
     vacancy Int?
     job_context Json?
     job_responsibility Json?

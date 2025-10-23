@@ -7,6 +7,7 @@ export class JobController{
     static postJobController = catchAsync(
         async (req: Request, res: Response) => {
           const payload = await req?.body;
+          console.log("payload",payload);
           const { title } = payload;
           const OR: any[] = Object.entries(title).map(([key, value]) => ({
             title: { path: [key], equals: value },
@@ -14,7 +15,7 @@ export class JobController{
           const query = { OR };
           const existCategory = await globalService.existDocument({
             query: query,
-            model: "",
+            model: "Job",
             shouldExist: false,
             isError: true,
             errorMessages: "",
