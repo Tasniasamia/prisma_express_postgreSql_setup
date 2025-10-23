@@ -6,5 +6,6 @@ import { JobController } from "./job.controlller";
 
 const router = Router();
 router.post('/',isVerifyAdmin,validate(createJobSchema),JobController.postJobController)
+router.get('/public',JobController.findJobControllerPublic)
 
 export const JobRoutes: Router = router;

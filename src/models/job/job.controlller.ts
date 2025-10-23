@@ -41,7 +41,7 @@ export class JobController{
         }
       );
 
-      static findJobCategoryControllerPublic = catchAsync(
+      static findJobControllerPublic = catchAsync(
         async (req: Request, res: Response) => {
           const {
             page = "1",
@@ -76,11 +76,49 @@ export class JobController{
     
           res.status(200).json({
             success: true,
-            message: "Job categories fetched successfully",
+            message: "Job  fetched successfully",
             data,
           });
         }
       );
-
+      static findJobControllerAdmin = catchAsync(
+        async (req: Request, res: Response) => {
+          const {
+            page = "1",
+            limit = "8",
+            search = "",
+            langCode = "en",
+          } = req.query as any;
+          const OR: any[] = search
+            ? [
+                {
+                  [`title.${langCode}`]: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                }
+              ]
+            : [];
+    
+          const where: any = {
+            ...(OR.length ? { OR } : {}),
+          };
+    
+          const data = await globalService.getDocuments({
+            model: "Job",
+            filter: where,
+            include: {category:true},
+            select: {},
+            page: parseInt(page),
+            limit: parseInt(limit),
+          });
+    
+          res.status(200).json({
+            success: true,
+            message: "Job  fetched successfully",
+            data,
+          });
+        }
+      );
 
 }
