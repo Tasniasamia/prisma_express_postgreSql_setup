@@ -1,8 +1,6 @@
 import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
-import { JobCategoryService } from "./job-category.service";
 import { AppError } from "@/errors/appError";
-import { success } from "zod";
 import { globalService } from "@/utils/global.service";
 
 export class JobCategoryController {

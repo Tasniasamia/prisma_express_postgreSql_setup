@@ -54,7 +54,6 @@ model Setting {
   site_footer           String?
   client_side_url       String?
   server_side_url       String?
- uploadType         String?
 
 
   stripe            Json?
@@ -80,11 +79,7 @@ model otp {
   createdAt  DateTime @default(now())
 }
 
-enum Jobtype{
-  REMOTE
-  HYBRID
-  ONSITE
-}
+
 model JobCategory{
     id         String   @id @default(uuid())
     name Json
@@ -109,7 +104,7 @@ model Job{
     salary Int?
     deadLine DateTime?
     status Boolean
-    jobType Jobtype @default(ONSITE)
+    jobType String?
     author_name Json
     job_location Json?
     createdAt         DateTime @default(now())
