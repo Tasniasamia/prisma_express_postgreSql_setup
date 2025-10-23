@@ -8,20 +8,6 @@ type settingsType = {
   site_footer?: string;
   client_side_url?: string;
   server_side_url?: string;
-  otp_verification_type?: "email" | "phone";
-  email_config?: {
-    resend: {
-      api_key: string;
-      email: string;
-    };
-  };
-  cloud_config: {
-    cloudinary: {
-      cloud_name: string;
-      api_key: string;
-      api_secret: string;
-    };
-  };
 
   stripe?: {
     credentials: {

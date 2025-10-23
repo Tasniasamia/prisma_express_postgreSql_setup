@@ -24,18 +24,18 @@ export class globalService {
   };
   static existDocument = async <T>({
     query,
-    select,
     model,
     shouldExist = false,
     isError,
     errorMessages,
     include,
-  }: existDocumentOptions): Promise<T> => {
-    const findDoc = await (db as any)[model].findFirst(
-      { where: query },
-      select,
-      include
-    );
+  }: existDocumentOptions): Promise<T > => {
+
+      const findDoc =await (db as any)[model].findFirst({
+      where: query,
+      ...(include && { include }),
+    });
+    console.log("findDoc",findDoc);
     if (findDoc && !shouldExist && isError) {
       throw new AppError(400, "Something went wrong", `${model} already exist`);
     }

@@ -17,13 +17,12 @@ const generateOTP=()=>{
 }
 
 const sendEmail=async(email:string,otp:string)=>{
-    const findSettings=await SettingService.findResendEmailSettings();
 
-    const api_key=findSettings?.email_config?.resend_api_key;
+    const api_key=process.env.RESEND_API_KEY;
     const resend = new Resend(api_key);
     const { data, error } = await resend.emails.send({
       from: 'Summer Camp <onboarding@resend.dev>',
-      to: [`${email}`],
+      to: [`${process.env.RESEND_EMAIL}`],
       subject: 'Hello User',
       html: `<strong>Your OTP verification code is ${otp}</strong>`,
     });

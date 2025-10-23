@@ -5,7 +5,6 @@ export interface createDocumentOptions<TData,TModel>{
 
 export interface existDocumentOptions{
     query:Record<string,any>,
-    select:any,
     model:any,
     shouldExist:boolean,
     isError:boolean,

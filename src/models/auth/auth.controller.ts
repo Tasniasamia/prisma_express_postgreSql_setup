@@ -45,8 +45,7 @@ export class authController {
         is_deleted,
       } = req.body;
       let isOTPVerify;
-      const otpVerificationByEmail =
-        await OTPService.findByOtpVerificationTypeEmail();
+      const otpVerificationByEmail =process.env.OTP_VERIFICATION_TYPE === "email";
       if (!otpVerificationByEmail) {
         isOTPVerify = await OTPService.verifyOTP(phone, "signup", otp);
       } else {
@@ -323,7 +322,7 @@ export class authController {
       }
   
       const isEmail = validateEmail(identifier);
-      const otpVerificationEmail = await OTPService.findByOtpVerificationTypeEmail();
+      const otpVerificationEmail = process.env.OTP_VERIFICATION_TYPE === "email";
   
       if (isEmail) {
         if (!otpVerificationEmail) {

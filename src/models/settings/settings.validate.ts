@@ -1,23 +1,7 @@
 import { z } from "zod";
 
-const resendSchema = z.object({
-  api_key: z.string().min(1, "resend.api_key is required"),
-  email: z.string().email("resend.email must be a valid email"),
-}).strict();
 
-const emailConfigSchema = z.object({
-  resend: resendSchema.optional(),
-}).strict().optional();
 
-const cloudinarySchema = z.object({
-  cloud_name: z.string().min(1, "cloudinary.cloud_name is required"),
-  api_key: z.string().min(1, "cloudinary.api_key is required"),
-  api_secret: z.string().min(1, "cloudinary.api_secret is required"),
-}).strict();
-
-const cloudConfigSchema = z.object({
-  cloudinary: cloudinarySchema,
-}).strict().optional();
 
 const stripeCredentialsSchema = z.object({
   stripe_publishable_key: z.string().min(1),
@@ -87,10 +71,7 @@ export const settingSchemaValidation = z.object({
   client_side_url: z.string().url().optional(),
   server_side_url: z.string().url().optional(),
 
-  otp_verification_type: z.enum(["email", "phone"]).optional(),
 
-  email_config: emailConfigSchema,
-  cloud_config: cloudConfigSchema,
   stripe: stripeSchema,
   paypal: paypalSchema,
   razorpay: razorpaySchema,

@@ -27,8 +27,7 @@ export class OTPController {
     }
 
     const validateEmailIdentifier = validateEmail(identifier);
-    const otpVerificationEmail =
-      await OTPService.findByOtpVerificationTypeEmail();
+    const otpVerificationEmail =process.env.OTP_VERIFICATION_TYPE === 'email'
     if (validateEmailIdentifier && !otpVerificationEmail) {
       throw new AppError(
         404,
@@ -64,7 +63,8 @@ export class OTPController {
           "OTP Already Sent",
           "Please wait 2 minutes before requesting a new OTP."
         );
-      } else {
+      }
+       else {
         const findUser = await userService.findUserByPhone(identifier);
         if (!findUser) {
           throw new AppError(404, "Unauthrized Access", "User not Found");
@@ -92,7 +92,8 @@ export class OTPController {
           "Please wait 2 minutes before requesting a new OTP."
         );
       }
-    } else {
+    } 
+    else {
       if (otpVerificationEmail) {
         const findExistUser = await OTPService.findExistUser(
           identifier,
@@ -149,7 +150,7 @@ export class OTPController {
     }
     if (action !== "signup") {
       const isEmail = validateEmail(identifier);
-      const isEmailOtpEnabled = await OTPService.findByOtpVerificationTypeEmail();
+      const isEmailOtpEnabled =process.env.OTP_VERIFICATION_TYPE === 'email';
   
       if (isEmail && !isEmailOtpEnabled) {
         throw new AppError(

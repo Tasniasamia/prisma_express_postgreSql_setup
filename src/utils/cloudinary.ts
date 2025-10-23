@@ -1,21 +1,22 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
-import dotenv from "dotenv";
 import { SettingService } from "@/models/settings/settings.service";
 import { AppError } from "@/errors/appError";
 
-dotenv.config();
+
 
 export const initCloudinary = async () => {
-  const environmentVariable = await SettingService.findCloudinarySettings();
+  // const environmentVariable = await SettingService.findCloudinarySettings();
 
-  if (!environmentVariable?.cloud_config) {
-    throw new AppError(400,'Cloudinary configuration not found in database.',"Cloudinary configuration not found in database.");
-  }
+  // if (!environmentVariable?.cloud_config) {
+  //   throw new AppError(400,'Cloudinary configuration not found in database.',"Cloudinary configuration not found in database.");
+  // }
    cloudinary.config({
-    cloud_name: environmentVariable.cloud_config.cloud_name,
-    api_key: environmentVariable.cloud_config.api_key,
-    api_secret: environmentVariable.cloud_config.api_secret,
+    cloud_name:process.env.CLOUD_NAME,
+    api_key:process.env.API_KEY,
+    api_secret:process.env.API_SECRET,
   });
 };
 
