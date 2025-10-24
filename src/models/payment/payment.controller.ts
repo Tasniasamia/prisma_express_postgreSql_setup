@@ -10,6 +10,7 @@ import {
 import { AppError } from "@/errors/appError";
 import { checkMolliePaymentStatus, molieController } from "@/utils/molie";
 import { db } from "@/config/db";
+import { sslCommerzeController } from "@/utils/sslCommerze";
 
 export class PaymentController {
   static postPaymentController = catchAsync(
@@ -71,7 +72,6 @@ export class PaymentController {
         const url: string | any = parseJsonData?._links?.checkout?.href;
         const id: any = parseJsonData?.id;
         const makePayment=await createPayment(amount,payment_method,currency_code,course_id,user_id,id)
-        console.log("makePayment",makePayment)
         if(!makePayment){
             throw new AppError(400,'Something went wrong','Failed to create Payment into database')
         }
@@ -80,6 +80,20 @@ export class PaymentController {
           message: "Payment Create Successfully",
           data: { url: url, transaction_id: id, method: payment_method },
         });
+      }
+
+
+      else if(payment_method === "sslcommerz"){
+      if (currency_code !== "BDT") {
+          throw new AppError(
+            400,
+            "Something went wrong",
+            "Please Select BDT as currency_code for sslcommerz test mode"
+          );
+       }
+       const data = await sslCommerzeController(currency_code, amount);
+       console.log('sslcommerze data',data)
+
       }
       res.status(200).json({});
     }

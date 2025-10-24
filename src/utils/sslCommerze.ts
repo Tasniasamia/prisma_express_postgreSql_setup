@@ -1,37 +1,42 @@
-// import SSLCommerzPayment from "sslcommerz-lts";
+import { AppError } from "@/errors/appError";
+import SSLCommerzPayment from "sslcommerz-lts"; // ✅ npm i sslcommerz-lts
 
-// const store_id = process.env.SSLC_STORE_ID as string;
-// const store_passwd = process.env.SSLC_STORE_PASSWORD as string;
-// const is_live = false; // sandbox = false, live = true
+const store_id = process.env.STORE_ID!;
+const store_passwd = process.env.STORE_PASSWORD!;
+const is_live = false;
 
-// export const sslcommerzController = async (currency: string, amount: string) => {
-//   try {
-//     const data = {
-//       total_amount: parseFloat(amount),
-//       currency,
-//       tran_id: "REF" + Date.now(),
-//       success_url: process.env.SSLC_SUCCESS_URL,
-//       fail_url: process.env.SSLC_FAIL_URL,
-//       cancel_url: process.env.SSLC_CANCEL_URL,
-//       ipn_url: process.env.SSLC_IPN_URL,
-//       shipping_method: "NO",
-//       product_name: "Test Payment",
-//       product_category: "General",
-//       product_profile: "general",
-//       cus_name: "Customer Name",
-//       cus_email: "customer@example.com",
-//       cus_add1: "Dhaka",
-//       cus_city: "Dhaka",
-//       cus_country: "Bangladesh",
-//       cus_phone: "01700000000",
-//     };
+  export const sslCommerzeController = async ( currency_code:string,amount:number|any) => {
 
-//     const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-//     const apiResponse = await sslcz.init(data);
+    const transactionId = "txn_" + Date.now();
 
-//     return apiResponse.GatewayPageURL;
-//   } catch (error: any) {
-//     console.error("❌ SSLCommerz Error:", error.message || error);
-//     throw error;
-//   }
-// };
+    const data = {
+      total_amount: amount,
+      currency: currency_code,
+      tran_id: transactionId,
+      success_url: `${process.env.BACKEND_URL}/api/v1/payment/success?tran_id=${transactionId}`,
+      fail_url: `${process.env.BACKEND_URL}/api/v1/payment/fail?tran_id=${transactionId}`,
+      cancel_url: `${process.env.BACKEND_URL}/api/v1/payment/cancel?tran_id=${transactionId}`,
+      ipn_url: `${process.env.BACKEND_URL}/api/v1/payment/ipn`,
+      shipping_method: "NO",
+      product_name: "",
+      product_category: "Course",
+      product_profile: "general",
+      cus_name: "",
+      cus_email: "",
+      cus_add1: "Dhaka",
+      cus_city: "Dhaka",
+      cus_country: "Bangladesh",
+    };
+
+    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+
+    const apiResponse = await sslcz.init(data);
+    console.log("apiResponse",apiResponse);
+
+    if (!apiResponse.GatewayPageURL) {
+      throw new AppError(400, "Failed to create payment session", "No Gateway URL");
+    }
+    return apiResponse;
+   
+  }
+
