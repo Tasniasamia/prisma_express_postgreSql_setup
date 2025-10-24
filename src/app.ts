@@ -16,7 +16,6 @@ import { notFoundHandler } from "./middlewares/notFoundHandler"
 import { initCloudinary } from "./utils/cloudinary"
 import path from "path"
 import { fileURLToPath } from "url"
-import { molieController } from "./models/payment/test/molle"
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -97,10 +96,7 @@ app.post('/', async (req, res) => {
   })
 /*payment api testing*/
 
-app.post('/payment',async(req,res)=>{
-  const moie=await molieController();
-  return res.status(200).json(moie)
-})
+
 
 
 

@@ -42,7 +42,8 @@ model user {
   otp         String
   refreshToken String?
   createdAt    DateTime  @default(now())
-
+  Course Course[] @relation("courseInstructors")
+  Payment Payment[]
   @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
 
@@ -75,7 +76,8 @@ model Course {
   category     Coursecategory? @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   currency_code String?
   currency_symbol String?
-
+  instructors user[] @relation("courseInstructors")
+  Payment Payment[]
 }
 
 
@@ -174,4 +176,21 @@ model applyJob{
     Job Job @relation(fields: [JobId],references: [id],onDelete: Cascade,onUpdate: Cascade)
     createdAt         DateTime @default(now())
 
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  amount          Float
+  status          String     // example: "open", "paid", "failed", "canceled"
+  payment_method  String
+  currency_code   String
+  course_id       String
+  user_id         String
+  transaction_id  String?    // Mollie বা অন্য gateway এর unique payment ID
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+ 
+   user   user   @relation(fields: [user_id], references: [id])
+   course Course @relation(fields: [course_id], references: [id])
 }

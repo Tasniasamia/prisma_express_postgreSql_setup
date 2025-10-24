@@ -4,42 +4,56 @@ import { AppError } from "@/errors/appError";
 import { globalService } from "@/utils/global.service";
 
 export class CourseController {
-  static postCourseController = catchAsync(
-    async (req: Request, res: Response) => {
-      const payload = await req?.body;
-      const { name } = payload;
-      const OR: any[] = Object.entries(name).map(([key, value]) => ({
-        name: { path: [key], equals: value },
-      }));
-      const query = { OR };
-      const existCourse = await globalService.existDocument({
-        query: query,
-        model: "Course",
-        shouldExist: false,
-        isError: true,
-        errorMessages: "",
-        include: true,
-      });
-      const createCourse = await globalService.createDocument({
-        data: payload,
-        model: "Course",
-      });
-      if (createCourse) {
-        return res
-          .status(200)
-          .json({
-            success: true,
-            statusCode: 200,
-            message: "Course created successfully",
-          });
-      }
-      throw new AppError(
-        400,
-        "something went wrong ",
-        "Failed to create Course"
-      );
+  static postCourseController = catchAsync(async (req: Request, res: Response) => {
+    const payload = req.body;
+  
+    // ✅ Duplicate check logic same থাকবে
+    const { name } = payload;
+    const OR: any[] = Object.entries(name).map(([key, value]) => ({
+      name: { path: [key], equals: value },
+    }));
+    const query = { OR };
+  
+    await globalService.existDocument({
+      query,
+      model: "Course",
+      shouldExist: false,
+      isError: true,
+      errorMessages: "",
+      include: true,
+    });
+  
+    const data: any = { ...payload };
+  
+    if (data.categoryId) {
+      data.category = { connect: { id: data.categoryId } };
+      delete data.categoryId;
     }
-  );
+  
+    if (Array.isArray(data.instructorIds) && data.instructorIds.length > 0) {
+      data.instructors = {
+        connect: data.instructorIds.map((id: string) => ({ id })),
+      };
+      delete data.instructorIds;
+    }
+  
+    const createCourse = await globalService.createDocument({
+      data,
+      model: "Course",
+    });
+  
+    if (createCourse) {
+      return res.status(200).json({
+        success: true,
+        statusCode: 200,
+        message: "Course created successfully",
+        data: createCourse,
+      });
+    }
+  
+    throw new AppError(400, "Something went wrong", "Failed to create Course");
+  });
+  
 
   static updateCourseController = catchAsync(
     async (req: Request, res: Response) => {
@@ -57,9 +71,22 @@ export class CourseController {
         errorMessages: "",
         include: {category:true},
       });
+      const data: any = { ...payload };
+  
+    if (data.categoryId) {
+      data.category = { connect: { id: data.categoryId } };
+      delete data.categoryId;
+    }
+  
+    if (Array.isArray(data.instructorIds) && data.instructorIds.length > 0) {
+      data.instructors = {
+        connect: data.instructorIds.map((id: string) => ({ id })),
+      };
+      delete data.instructorIds;
+    }
       const updateCourse = await globalService.updateDocument({
-        id: payload?.id,
-        data: payload,
+        id: data?.id,
+        data: data,
         model: "Course",
       });
       if (updateCourse) {
@@ -112,7 +139,7 @@ export class CourseController {
       const data = await globalService.getDocuments({
         model: "Course",
         filter: where,
-        include: {},
+        include: {category:true,instructors:true},
         select: {},
         page: parseInt(page),
         limit: parseInt(limit),
@@ -158,7 +185,7 @@ export class CourseController {
       const data = await globalService.getDocuments({
         model: "Course",
         filter: where,
-        include: {},
+        include: {category:true,instructors:true},
         select: {},
         page: parseInt(page),
         limit: parseInt(limit),

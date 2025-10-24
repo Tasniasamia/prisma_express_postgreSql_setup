@@ -22,8 +22,7 @@ export const molieController = async (currency:string,amount:string) => {
     // console.log('🔗 Checkout URL:', payment);
     // console.log('🔗 Checkout URL:', payment?._links.checkout?.href);
 
-
-    return payment?._links.checkout?.href;
+    return {payment?._links.checkout?.href,payment.id,payment}
   } catch (error: any) {
     console.error('❌ Mollie Error:', error.message || error);
     throw error;

@@ -8,7 +8,7 @@ const recordStringSchema = z.record(
 export const courseValidation = z.object({
   name: recordStringSchema.optional(),
   price: z.number().positive("Price must be positive").optional(),
-  rate: z.number().min(0).max(5).optional(),
+  rate: z.number().min(0).max(5, "Rate must be between 0 and 5").optional(),
   description: recordStringSchema.optional(),
   duration: z.string().optional(),
   time: z.string().optional(),
@@ -16,15 +16,22 @@ export const courseValidation = z.object({
     .record(z.string(), recordStringSchema)
     .optional()
     .refine(
-      (val) => val === undefined || Object.keys(val).length > 0,
+      (val) => !val || Object.keys(val).length > 0,
       "Days object cannot be empty"
     ),
   place: z.string().optional(),
   sit: z.number().int().positive("Sit must be a positive integer").optional(),
-  enrollment: z.number().int().nonnegative().optional(),
+  enrollment: z
+    .number()
+    .int()
+    .nonnegative("Enrollment must be a non-negative integer")
+    .optional(),
   status: z.boolean().optional(),
   image: z.string().url("Image must be a valid URL").optional(),
   categoryId: z.string().uuid("Invalid category ID").optional(),
+
+  // ✅ instructorIds added for many-to-many relation
+  instructorIds: z.array(z.string().uuid()).optional(),
 });
 
 export const updateCourseValidation = courseValidation.extend({

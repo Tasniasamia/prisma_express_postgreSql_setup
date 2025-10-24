@@ -16,6 +16,7 @@
  "license": "ISC",
  "dependencies": {
   "@emailjs/browser": "^4.4.1",
+  "@everapi/currencyapi-js": "^1.0.6",
   "@mollie/api-client": "^4.3.3",
   "@prisma/client": "^6.17.1",
   "@types/bcrypt": "^6.0.0",
