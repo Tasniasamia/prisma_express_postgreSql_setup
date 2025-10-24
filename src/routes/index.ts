@@ -2,6 +2,7 @@ import { ApplyJobRoutes } from "@/models/applyJob/apply.job.route";
 import { authRoutes } from "@/models/auth/auth.route";
 import { CourseRoutes } from "@/models/course/course.route";
 import { CourseCategoryRoutes } from "@/models/courseCategory/course.category.route";
+import { currencyRoute } from "@/models/currency/currency.route";
 import { JobCategoryRoutes } from "@/models/job-category/job-category.route";
 import { JobRoutes } from "@/models/job/job.route";
 import { otpRoutes } from "@/models/otp/otp.route";
@@ -57,6 +58,10 @@ import { Router } from "express";
     {
         path:'/course',
         routes:CourseRoutes
+    },
+    {
+        path:'/currency',
+        routes:currencyRoute
     }
 ]
 allRoutes?.forEach((i,index)=>{
