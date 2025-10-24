@@ -1,13 +1,14 @@
 import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 import {
+    createPayment,
   findCourseByInfo,
   findPaidCourseByUser,
   findRoleUser,
+  updatePaymentStatus,
 } from "./payment.service";
 import { AppError } from "@/errors/appError";
 import { checkMolliePaymentStatus, molieController } from "@/utils/molie";
-import z, { success } from "zod";
 import { db } from "@/config/db";
 
 export class PaymentController {
@@ -69,16 +70,11 @@ export class PaymentController {
         const parseJsonData = JSON.parse(jsonData);
         const url: string | any = parseJsonData?._links?.checkout?.href;
         const id: any = parseJsonData?.id;
-        await db.payment.create({
-          data: {
-            amount: amount,
-            payment_method: payment_method,
-            currency_code: currency_code,
-            course_id: course_id,
-            user_id: user_id,
-            transaction_id: id,
-          },
-        });
+        const makePayment=await createPayment(amount,payment_method,currency_code,course_id,user_id,id)
+        console.log("makePayment",makePayment)
+        if(!makePayment){
+            throw new AppError(400,'Something went wrong','Failed to create Payment into database')
+        }
         return res.status(200).json({
           success: true,
           message: "Payment Create Successfully",
@@ -98,37 +94,54 @@ export class PaymentController {
     const paymentData = await db.payment.findFirst({
       where: { transaction_id: tranc_id },
     });
+    const findCourse = await db.course.findFirst({
+      where: { id: paymentData?.course_id },
+    });
+    if (findCourse?.sit === 0) {
+      throw new AppError(
+        400,
+        "Something went wrong",
+        "No Sit available for course"
+      );
+    }
     //mollie
     if (payment_method === "mollie") {
       const getdata = await checkMolliePaymentStatus(tranc_id);
-      if (getdata?.status) {
-        if (getdata?.status === "paid") {
-          console.log("paymentData", paymentData);
-          //    const findCourse=await db.course.findFirst({where:{id:paymentData?.course_id}});
-          //    if(findCourse?.sit == 0){
-          //      throw new AppError(400,'Something went wrong','No Sit available for course')
-          //    }
-          await db.course.update({
-            where: { id: paymentData?.course_id },
-            data: { sit: { decrement: 1 } },
-          });
-        }
-        const data = await db.payment.update({
-          where: { transaction_id: tranc_id },
-          data: { status: getdata?.status },
-        });
-        return res
-          .status(200)
-          .json({
-            success: true,
-            message: "Status updated successfully",
-            data: data,
-          });
+      const data = await updatePaymentStatus(getdata, paymentData, tranc_id);
+      if (!data) {
+        throw new AppError(
+          400,
+          "Something went wrong",
+          "Failed to update payment status"
+        );
       }
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "Status updated successfully",
+          data: data,
+        });
+      //   if (getdata?.status) {
+      //     if (getdata?.status === "paid") {
+      //       await db.course.update({
+      //         where: { id: paymentData?.course_id },
+      //         data: { sit: { decrement: 1 } },
+      //       });
+      //     }
+      //     const data = await db.payment.update({
+      //       where: { transaction_id: tranc_id },
+      //       data: { status: getdata?.status },
+      //     });
+      //     return res
+      //       .status(200)
+      //       .json({
+      // success: true,
+      // message: "Status updated successfully",
+      // data: data,
+      //       });
+      //   }
     }
-    //for all
     return res.status(200).json({});
   };
-
-
 }
