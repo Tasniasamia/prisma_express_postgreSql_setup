@@ -181,7 +181,7 @@ model applyJob{
 model Payment {
   id              String   @id @default(cuid())
   amount          Float
-  status          String     // example: "open", "paid", "failed", "canceled"
+  status          String @default("pending")     // example: "open", "paid", "failed", "canceled"
   payment_method  String
   currency_code   String
   course_id       String
