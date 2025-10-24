@@ -6,5 +6,5 @@ import { paymentSchema } from "./payment.validate";
 
 const route=Router();
 route.post('/',isVerify,validate(paymentSchema),PaymentController.postPaymentController);
-
+route.get('/',PaymentController.checkandUpdatePaymentStatusController);
 export const paymentRoutes:Router=route;

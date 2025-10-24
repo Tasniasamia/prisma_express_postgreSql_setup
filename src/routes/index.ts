@@ -6,6 +6,7 @@ import { currencyRoute } from "@/models/currency/currency.route";
 import { JobCategoryRoutes } from "@/models/job-category/job-category.route";
 import { JobRoutes } from "@/models/job/job.route";
 import { otpRoutes } from "@/models/otp/otp.route";
+import { paymentRoutes } from "@/models/payment/payment.route";
 import { languageRoutes } from "@/models/setting-language/setting.language.route";
 import { settingRoute } from "@/models/settings/settings.route";
 import { teacherRoutes } from "@/models/teacher/teacher.route";
@@ -62,6 +63,10 @@ import { Router } from "express";
     {
         path:'/currency',
         routes:currencyRoute
+    },
+    {
+        path:"/payment",
+        routes:paymentRoutes
     }
 ]
 allRoutes?.forEach((i,index)=>{
