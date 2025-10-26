@@ -78,44 +78,66 @@ export const updatePaymentStatus = async <T>(
       `Your payment is ${statusData?.status}`
     );
   }
-  let data;
 
-  if (statusData?.status === "paid") {
-    
-        await db.$transaction(async (tx) => {
+  try {
+    const data = await db.$transaction(async (tx) => {
+      // 🔹 1. Get the course and its instructors
       const getCourse = await tx.course.findUnique({
         where: { id: paymentData?.course_id },
         include: { instructors: true },
       });
-  
+
+      if (!getCourse) {
+        throw new AppError(404, "Course not found", "Invalid course ID");
+      }
+
       const instructors = getCourse?.instructors || [];
-  
-      // Create messageFriend for each instructor
+
+      // 🔹 2. Create messageFriend for each instructor (avoid duplicates)
       await Promise.all(
-        instructors.map((i) =>
-          tx.messageFriend.create({
-            data: { friendId: i.id, accountId: paymentData.user_id },
-          })
-        )
+        instructors.map(async (i) => {
+          await tx.messageFriend.upsert({
+            where: {
+              accountId_friendId: {
+                accountId: paymentData.user_id,
+                friendId: i.id,
+              },
+            },
+            update: {}, // do nothing if already exists
+            create: {
+              accountId: paymentData.user_id,
+              friendId: i.id,
+            },
+          });
+        })
       );
-  
-      // Decrease course seat
+
+      // 🔹 3. Decrease available course seat
       await tx.course.update({
         where: { id: paymentData.course_id },
         data: { sit: { decrement: 1 } },
       });
-  
-      // Update payment status
-      return await tx.payment.update({
+
+      // 🔹 4. Update payment status
+      const updatedPayment = await tx.payment.update({
         where: { transaction_id: tranc_id },
         data: { status: statusData.status },
       });
+
+      return updatedPayment;
     });
 
-
+    return data;
+  } catch (error:any) {
+    console.error("❌ updatePaymentStatus error:", error);
+    throw new AppError(
+      400,
+      "Something went wrong",
+      error?.message || "Failed to update payment status"
+    );
   }
-return data;
 };
+
 
 export const createPayment = async (
   amount: number,
