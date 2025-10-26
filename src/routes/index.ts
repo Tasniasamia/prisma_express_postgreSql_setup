@@ -2,6 +2,7 @@ import { ApplyJobRoutes } from "@/models/applyJob/apply.job.route";
 import { authRoutes } from "@/models/auth/auth.route";
 import { blogCategoryRoutes } from "@/models/blog-category/blog-category.route";
 import { blogRoutes } from "@/models/blog/blog.route";
+import { contactRoutes } from "@/models/contact/contact.route";
 import { CourseRoutes } from "@/models/course/course.route";
 import { CourseCategoryRoutes } from "@/models/courseCategory/course.category.route";
 import { currencyRoute } from "@/models/currency/currency.route";
@@ -82,6 +83,10 @@ import { Router } from "express";
     {
         path:'/blog',
         routes:blogRoutes
+    },
+    {
+        path:'/contact',
+        routes:contactRoutes
     }
 ]
 allRoutes?.forEach((i,index)=>{
