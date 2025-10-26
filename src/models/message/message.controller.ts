@@ -6,7 +6,7 @@ import { success } from "zod";
 
 export class MessageController {
 
-    static markAsRead = catchAsync(async (req: Request, res: Response) => {
+    static markAsRead = (async (req: Request, res: Response) => {
         const { decoded } = req.body;
         const { messageIds, friendId } = req.body;
         
@@ -60,8 +60,7 @@ export class MessageController {
         });
       });
     
-      // Get unread messages count
-      static getUnreadCount = catchAsync(async (req: Request, res: Response) => {
+      static getUnreadCount = (async (req: Request, res: Response) => {
         const { decoded } = req.body;
         const currentUserId = decoded?.id;
     
@@ -94,8 +93,7 @@ export class MessageController {
         });
       });
     
-      // Mark all messages as read
-      static markAllAsRead = catchAsync(async (req: Request, res: Response) => {
+      static markAllAsRead = (async (req: Request, res: Response) => {
         const { decoded } = req.body;
         const currentUserId = decoded?.id;
     
@@ -149,8 +147,7 @@ export class MessageController {
       data: createMessage,
     });
   });
- // For pagination in getAllMessages
- static getAllMessages = catchAsync(async (req: Request, res: Response) => {
+ static getAllMessages = (async (req: Request, res: Response) => {
     const { decoded } = req.body;
     
     const findAllMessages = await db.message.findMany({
@@ -176,7 +173,7 @@ export class MessageController {
   });
 
 
-  static findAllFriends = catchAsync(async (req: Request, res: Response) => {
+  static findAllFriends = (async (req: Request, res: Response) => {
     const { decoded } = req.body;
     const currentUserId = decoded?.id;
     
