@@ -1,3 +1,4 @@
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -45,7 +46,8 @@ model user {
   userAccount   messageFriend[] @relation("userAccount")
   fromInfo      message[]       @relation("fromInfo")
   toInfo        message[]       @relation("toInfo")
-
+  comment comment[]
+  reply reply[]
   @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
 }
@@ -252,6 +254,8 @@ model comment {
   blog           blog     @relation(fields: [blogId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt      DateTime @default(now())
   reply          reply[]
+  userId         String
+  user user @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
 }
 
 model reply {
@@ -260,5 +264,6 @@ model reply {
   commentId    String
   comment      comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt      DateTime @default(now())
-
+  userId         String
+  user user @relation(fields: [userId],references: [id],onDelete: Cascade,onUpdate: Cascade)
 }

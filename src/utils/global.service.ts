@@ -64,31 +64,36 @@ export class globalService {
     const deleteDoc = await (db as any)[model].delete({ where: {id:id} });
     return deleteDoc;
   };
-  static findDocuments = async <T>({
+  static async findDocuments<T>({
     model,
-    filter,
+    filter = {},
     single = true,
     include,
     select,
-  }: findDocumentOptions<T>): Promise<T> => {
-    let data;
+    orderBy = { createdAt: "desc" },
+  }: findDocumentOptions<T>): Promise<T | T[] | null> {
+    const prismaModel = (db as any)[model];
+
+    if (!prismaModel) {
+      throw new Error(`Invalid model name: ${model}`);
+    }
+
     if (single) {
-      data = await (db as any)[model].findFirst({
+      return await prismaModel.findFirst({
         where: filter,
         select,
         include,
-        sort: { createdAt: "dec" },
+        orderBy,
       });
     } else {
-      data = await (db as any)[model].findMany({
+      return await prismaModel.findMany({
         where: filter,
         select,
         include,
-        sort: { createdAt: "dec" },
+        orderBy,
       });
     }
-    return data;
-  };
+  }
   static async getDocuments<T>({
     model,
     filter = {},

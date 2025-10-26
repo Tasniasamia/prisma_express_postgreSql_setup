@@ -2,6 +2,7 @@ import { AppError } from "@/errors/appError";
 import { catchAsync } from "@/utils/catchAsync";
 import { globalService } from "@/utils/global.service";
 import { Request,Response } from "express";
+import { includes, success } from "zod";
 
 export class blogController{
     static postblogController = catchAsync(
@@ -41,9 +42,7 @@ export class blogController{
         }
       );
 
-    
-
-      static findblogControllerPublic = catchAsync(
+    static findblogControllerPublic = catchAsync(
         async (req: Request, res: Response) => {
           const {
             page = "1",
@@ -74,7 +73,20 @@ export class blogController{
           const data = await globalService.getDocuments({
             model: "blog",
             filter: where,
-            include: { category: true ,comment:true },
+            include: {
+                category: true,
+                comment: {
+                  include: {
+                    user: true, 
+                    reply: {
+                      include: {
+                        user: true, 
+                      },
+                    },
+                  },
+                },
+              }
+              ,
             select: {},
             page: parseInt(page),
             limit: parseInt(limit),
@@ -118,8 +130,20 @@ export class blogController{
           const data = await globalService.getDocuments({
             model:"blog",
             filter: where,
-            include: { category: true , comment: true },
-            select: {},
+            include: {
+                category: true,
+                comment: {
+                  include: {
+                    user: true, 
+                    reply: {
+                      include: {
+                        user: true, 
+                      },
+                    },
+                  },
+                },
+              },
+                          select: {},
             page: parseInt(page),
             limit: parseInt(limit),
           });
@@ -187,4 +211,117 @@ export class blogController{
           "Failed to delete blog"
         );
       });
+      static createBlogComment = async (req: Request, res: Response) => {
+        try {
+          const { commentMessage, blogId, userId, decoded } = req.body;
+      
+          // Blog and User exist check
+          const findBlog = await globalService.findDocuments({
+            model: 'blog',
+            filter: { id: blogId },
+            single: true,
+        
+          });
+      
+          const findUser = await globalService.findDocuments({
+            model: 'user',
+            filter: { id: userId },
+            single: true,
+          
+          });
+      
+          if (!findBlog || !findUser) {
+            throw new AppError(
+              400,
+              "Something went wrong",
+              "No user or blog exists"
+            );
+          }
+      
+          // Token check
+          if (decoded?.id !== userId) {
+            throw new AppError(
+              400,
+              "Unauthorized user",
+              "Token user ID and body user ID do not match"
+            );
+          }
+      
+          // Create new comment
+          const createComment = await globalService.createDocument({
+            data: {
+              commentMessage,
+              blogId,
+              userId,
+            },
+            model: "comment",
+          });
+      
+          if (createComment) {
+            return res.status(200).json({
+              success: true,
+              message: "Comment created successfully",
+              data: createComment,
+            });
+          }
+      
+          throw new AppError(
+            400,
+            "Something went wrong",
+            "Failed to create comment"
+          );
+      
+        } catch (error: any) {
+          console.error("createBlogComment error:", error);
+      
+          // ✅ This part was missing — now sends error response
+          return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.message || "Internal Server Error",
+            errorMessage: error?.errorMessage || "Something went wrong",
+          });
+        }
+      };
+      static createBlogReply = async (req: Request, res: Response) => {
+ 
+          const { replyMessage, commentId, userId, decoded } = req.body;
+          console.log("Decoded:", decoded, "UserId:", userId);
+      
+          const findComment = await globalService.findDocuments({
+            model: "comment",
+            filter: { id: commentId },
+            single: true,
+          });
+      
+          const findUser = await globalService.findDocuments({
+            model: "user",
+            filter: { id: userId },
+            single: true,
+          });
+      
+          if (!findComment || !findUser) {
+            throw new AppError(400, "Something went wrong", "No user or comment exists");
+          }
+      
+          if (decoded?.id !== userId) {
+            throw new AppError(400, "Unauthorized user", "Token user ID and body user ID do not match");
+          }
+      
+          const createReply = await globalService.createDocument({
+            data: { replyMessage, commentId, userId },
+            model: "reply",
+          });
+      
+          if (createReply) {
+            return res.status(200).json({
+              success: true,
+              message: "Reply created successfully",
+              data: createReply,
+            });
+          }
+      
+          throw new AppError(400, "Something went wrong", "Failed to create reply");
+        
+      };
+      
 }

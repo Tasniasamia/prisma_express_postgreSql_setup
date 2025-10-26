@@ -21,11 +21,12 @@ export interface deleteDocumentOptions<TModel>{
     model:TModel
 }
 export interface findDocumentOptions<TModel>{
- model:TModel,
- filter:any,
- single:boolean,
- include:any,
- select:any,
+    model: TModel; // যেমন 'user' | 'blog' | 'comment'
+    filter?: Record<string,string>;
+    single?: boolean;
+    include?: any;
+    select?: any;
+    orderBy?: Record<string, "asc" | "desc">;
 
 }
 
