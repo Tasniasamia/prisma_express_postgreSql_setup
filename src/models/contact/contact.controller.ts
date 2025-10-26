@@ -16,14 +16,14 @@ export class ContactController{
     });
     static replyContact=catchAsync(async(req:Request,res:Response)=>{
         const payload=await req?.body;
-        const existContact=await globalService.existDocument({    query:payload?.id,
+        payload.isReply=true;
+        const existContact=await globalService.existDocument({query:{id:payload?.id},
             model:'contact',
             shouldExist : true,
             isError:false,
             errorMessages:'',
             include:{},})
-
-       const replyContact=await globalService.updateDocument({id:payload?.id, data:payload,
+      const replyContact=await globalService.updateDocument({id:payload?.id, data:payload,
          model:"contact"})
        if(!replyContact){
          throw new AppError(400,'Something went wrong','Failed to reply contact')
