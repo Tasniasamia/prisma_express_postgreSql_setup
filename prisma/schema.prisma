@@ -1,6 +1,3 @@
- 
-
-
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -18,88 +15,84 @@ datasource db {
 }
 
 enum Role {
-  ADMIN @map("admin")
-  USER  @map("user")
+  ADMIN   @map("admin")
+  USER    @map("user")
   TEACHER @map("teacher")
 }
 
 model user {
-  id          String   @id @default(uuid())
-  name        String?
-  email       String   @unique
-  password    String
-  image       String?
-  phone       String?
-  role        Role
-  country     String?
-  city        String?
-  state       String?
-  zip_code    String?
-  address     String?
-  about       String?
-  is_deleted  Boolean?
-  is_modified Boolean? @ignore
-  otp         String
-  refreshToken String?
-  createdAt    DateTime  @default(now())
-  Course Course[] @relation("courseInstructors")
-  Payment Payment[]
-  friendAccount messageFriend[] @relation("friendAccount") 
-  userAccount messageFriend[] @relation("userAccount")
-  fromInfo message[] @relation("fromInfo")
-  toInfo message[] @relation("toInfo")
+  id            String          @id @default(uuid())
+  name          String?
+  email         String          @unique
+  password      String
+  image         String?
+  phone         String?
+  role          Role
+  country       String?
+  city          String?
+  state         String?
+  zip_code      String?
+  address       String?
+  about         String?
+  is_deleted    Boolean?
+  is_modified   Boolean?        @ignore
+  otp           String
+  refreshToken  String?
+  createdAt     DateTime        @default(now())
+  Course        Course[]        @relation("courseInstructors")
+  Payment       Payment[]
+  friendAccount messageFriend[] @relation("friendAccount")
+  userAccount   messageFriend[] @relation("userAccount")
+  fromInfo      message[]       @relation("fromInfo")
+  toInfo        message[]       @relation("toInfo")
+
   @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
-  
 }
 
 model Coursecategory {
-  id    String    @id @default(uuid())
-  name  Json
+  id          String   @id @default(uuid())
+  name        Json
   description Json?
-  createdAt         DateTime @default(now())
-  status Boolean 
-  Course Course[]
+  createdAt   DateTime @default(now())
+  status      Boolean
+  Course      Course[]
 }
+
 model Course {
-  id           String       @id @default(uuid())
-  name         Json
-  price        Float?
-  rate         Float?
-  description  Json?   
-  duration     String?
-  time         String?
-  days         Json? // JSON type
-  place        String?
-  createdAt    DateTime  @default(now())
-  sit          Int @default(0) 
-  enrollment   Int?
-  status       Boolean   @default(true)
-  image        String?
-  categoryId   String?      
-  category     Coursecategory? @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  currency_code String?
+  id              String          @id @default(uuid())
+  name            Json
+  price           Float?
+  rate            Float?
+  description     Json?
+  duration        String?
+  time            String?
+  days            Json? // JSON type
+  place           String?
+  createdAt       DateTime        @default(now())
+  sit             Int             @default(0)
+  enrollment      Int?
+  status          Boolean         @default(true)
+  image           String?
+  categoryId      String?
+  category        Coursecategory? @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  currency_code   String?
   currency_symbol String?
-  instructors user[] @relation("courseInstructors")
-  Payment Payment[]
+  instructors     user[]          @relation("courseInstructors")
+  Payment         Payment[]
 }
-
-
-
-
 
 model Setting {
-  id                    String  @id @default(uuid())
-  site_name             String?
-  site_email            String?
-  site_phone            String?
-  site_logo             String?
-  site_address          String?
-  site_description      String?
-  site_footer           String?
-  client_side_url       String?
-  server_side_url       String?
-
+  id               String  @id @default(uuid())
+  site_name        String?
+  site_email       String?
+  site_phone       String?
+  site_logo        String?
+  site_address     String?
+  site_description String?
+  site_footer      String?
+  client_side_url  String?
+  server_side_url  String?
 
   stripe            Json?
   paypal            Json?
@@ -112,10 +105,6 @@ model Setting {
   @@map("settings")
 }
 
-
-
-
-
 model otp {
   id         String   @id @default(uuid())
   identifier String
@@ -124,111 +113,148 @@ model otp {
   createdAt  DateTime @default(now())
 }
 
-
-model JobCategory{
-    id         String   @id @default(uuid())
-    name Json
-    description Json?
-    status Boolean 
-    job Job[]
-    createdAt         DateTime @default(now())
-
-}
-model Job{
-    id         String   @id @default(uuid())
-    title Json
-    company_name Json
-    job_position Json
-    categoryId String 
-    category JobCategory @relation(fields: [categoryId],references: [id],onUpdate: Cascade,onDelete: Cascade)
-    vacancy Int?
-    job_context Json?
-    job_responsibility Json?
-    educational_requirement Json?
-    additional_requirements Json?
-    salary Int?
-    deadLine DateTime?
-    status Boolean
-    jobType String?
-    author_name Json
-    job_location Json?
-    createdAt         DateTime @default(now())
-    applyJob applyJob[]
-
+model JobCategory {
+  id          String   @id @default(uuid())
+  name        Json
+  description Json?
+  status      Boolean
+  job         Job[]
+  createdAt   DateTime @default(now())
 }
 
+model Job {
+  id                      String      @id @default(uuid())
+  title                   Json
+  company_name            Json
+  job_position            Json
+  categoryId              String
+  category                JobCategory @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  vacancy                 Int?
+  job_context             Json?
+  job_responsibility      Json?
+  educational_requirement Json?
+  additional_requirements Json?
+  salary                  Int?
+  deadLine                DateTime?
+  status                  Boolean
+  jobType                 String?
+  author_name             Json
+  job_location            Json?
+  createdAt               DateTime    @default(now())
+  applyJob                applyJob[]
+}
 
-model language{
-  id String @id @default(uuid())
-  name String
-  code String
-  rtl Boolean?
-  flag String?
+model language {
+  id           String   @id @default(uuid())
+  name         String
+  code         String
+  rtl          Boolean?
+  flag         String?
   translations Json?
-  active Boolean?
-  default Boolean?
-  createdAt         DateTime @default(now())
+  active       Boolean?
+  default      Boolean?
+  createdAt    DateTime @default(now())
 }
-model applyJob{
-    id String @id @default(uuid())
-    name String
-    email String?
-    phone String
-    cover_letter String?
-    resume String?
-    JobId String
-    Job Job @relation(fields: [JobId],references: [id],onDelete: Cascade,onUpdate: Cascade)
-    createdAt         DateTime @default(now())
 
+model applyJob {
+  id           String   @id @default(uuid())
+  name         String
+  email        String?
+  phone        String
+  cover_letter String?
+  resume       String?
+  JobId        String
+  Job          Job      @relation(fields: [JobId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt    DateTime @default(now())
 }
 
 model Payment {
-  id              String   @id @default(uuid())
-  amount          Float
-  status          String? @default("pending")     // example: "open", "paid", "failed", "canceled"
-  payment_method  String
-  currency_code   String
-  course_id       String
-  user_id         String
-  transaction_id  String?    @unique
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  user   user   @relation(fields: [user_id], references: [id])
-  course Course @relation(fields: [course_id], references: [id])
+  id             String   @id @default(uuid())
+  amount         Float
+  status         String?  @default("pending") // example: "open", "paid", "failed", "canceled"
+  payment_method String
+  currency_code  String
+  course_id      String
+  user_id        String
+  transaction_id String?  @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           user     @relation(fields: [user_id], references: [id])
+  course         Course   @relation(fields: [course_id], references: [id])
 }
 
-
-model messageFriend{
-  id              String   @id @default(uuid())
-  friendId String
-  friends  user @relation("friendAccount", fields: [friendId],references: [id],onDelete: Cascade,onUpdate: Cascade)
-  accountId String @unique
-  user  user @relation("userAccount",fields: [accountId],references: [id],onDelete: Cascade,onUpdate: Cascade)
-  createdAt         DateTime @default(now())
+model messageFriend {
+  id        String   @id @default(uuid())
+  friendId  String
+  friends   user     @relation("friendAccount", fields: [friendId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  accountId String   @unique
+  user      user     @relation("userAccount", fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
 }
-enum Type{
+
+enum Type {
   TEXT
   IMAGE
   FILE
 }
-model messageType{
-      id              String   @id @default(uuid())
-      type     Type
-      message String?
-      createdAt         DateTime @default(now())
-      messageId String
-      messages message @relation(fields: [messageId],references: [id],onDelete: Cascade,onUpdate: Cascade)
- }
 
+model messageType {
+  id        String   @id @default(uuid())
+  type      Type
+  message   String?
+  createdAt DateTime @default(now())
+  messageId String
+  messages  message  @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
 
- 
- model message {
-  id          String   @id @default(uuid())
+model message {
+  id          String        @id @default(uuid())
   from        String
-  fromInfo    user     @relation("fromInfo", fields: [from], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fromInfo    user          @relation("fromInfo", fields: [from], references: [id], onDelete: Cascade, onUpdate: Cascade)
   to          String
-  toInfo      user     @relation("toInfo", fields: [to], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toInfo      user          @relation("toInfo", fields: [to], references: [id], onDelete: Cascade, onUpdate: Cascade)
   messageType messageType[]
-  isRead      Boolean  @default(false)
+  isRead      Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+}
+
+model blogCategory {
+  id          String   @id @default(uuid())
+  name        Json
+  description Json?
+  status      Boolean
+  blog        blog[]
   createdAt   DateTime @default(now())
+}
+
+model blog {
+  id                String       @id @default(uuid())
+  title             Json
+  short_description Json
+  description       Json?
+  createdAt         DateTime     @default(now())
+  categoryId        String       @unique
+  category          blogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status            Boolean      @default(true)
+  image             String?
+  thumbnail         String?
+  comment           comment[]
+}
+
+model comment {
+  id             String   @id @default(uuid())
+  commentMessage String
+  blogId         String
+  blog           blog     @relation(fields: [blogId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt      DateTime @default(now())
+  reply          reply[]
+}
+
+model reply {
+  id           String  @id @default(uuid())
+  replyMessage String
+  commentId    String
+  comment      comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt      DateTime @default(now())
+
 }
