@@ -1,5 +1,6 @@
 import { db } from "@/config/db";
 import { AppError } from "@/errors/appError";
+import { globalService } from "@/utils/global.service";
 
 export const findPaidCourseByUser = async (
   user_id: string,
@@ -128,3 +129,19 @@ export const createPayment = async (
   });
   return data;
 };
+
+export const findDataByUser=async(id:string)=>{
+  if(!id){
+    throw new AppError(400,'Something went wrong','Id is required for find user');
+  }
+  const data=await globalService.getDocuments({model:'payment',filter:{user_id:id},include:{user:true,course:true}});
+  console.log(data);
+  return data
+
+}
+export const findDataByAdmin=async()=>{
+  const data=await globalService.getDocuments({model:'payment',include:{user:true,course:true}});
+  console.log(data);
+  return data
+
+}

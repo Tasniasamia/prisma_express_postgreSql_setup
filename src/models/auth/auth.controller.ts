@@ -91,18 +91,23 @@ export class authController {
     async (req: Request, res: Response, next: NextFunction) => {
       const { email, password, role } = req?.body;
       const existUser = await userService.findUserByEmail(email);
+    
       if (!existUser || existUser?.role.toUpperCase() !== role?.toUpperCase()) {
         throw new AppError(400, "Invalid User", "Invalid User");
       }
+
+      console.log("existUser",existUser);
       const token = await generateToken({
-        email,
+        id:existUser?.id,
+        email:existUser?.email,
         password,
-        role: role?.toUpperCase(),
+        role: existUser?.role?.toUpperCase(),
       });
       const refreshToken = await generateRefreshToken({
-        email,
+        id:existUser?.id,
+        email:existUser?.email,
         password,
-        role: role?.toUpperCase(),
+        role: existUser?.role?.toUpperCase()
       });
       await AuthService.updateUser(email, { refreshToken: refreshToken });
 
@@ -284,7 +289,6 @@ export class authController {
         const payload = {
           id: user.id,
           email: user.email,
-          password: user?.password,
           role: user.role?.toUpperCase(),
         };
         const newAccessToken = await generateToken(payload);

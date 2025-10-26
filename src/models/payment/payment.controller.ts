@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import {
     createPayment,
   findCourseByInfo,
+  findDataByAdmin,
+  findDataByUser,
   findPaidCourseByUser,
   findRoleUser,
   updatePaymentStatus,
@@ -11,6 +13,7 @@ import { AppError } from "@/errors/appError";
 import { checkMolliePaymentStatus, molieController } from "@/utils/molie";
 import { db } from "@/config/db";
 import { sslCommerzeController } from "@/utils/sslCommerze";
+import { success } from "zod";
 
 export class PaymentController {
   static postPaymentController = catchAsync(
@@ -158,4 +161,16 @@ export class PaymentController {
     }
     return res.status(200).json({});
   };
+
+  static getPaymentByuser=async(req:Request,res:Response)=>{
+    console.log("decoded");
+    const {decoded}=await req.body;
+    console.log("decoded",decoded);
+    const data=await findDataByUser(decoded?.id);
+    return res.status(200).json({success:true,statusCode:200,message:"",data:data})
+  }
+  static getPaymentByAdmin=catchAsync(async(req:Request,res:Response)=>{
+    const data=await findDataByAdmin();
+    return res.status(200).json({success:true,statusCode:200,message:"",data:data})
+  })
 }
