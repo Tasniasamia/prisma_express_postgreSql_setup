@@ -81,16 +81,38 @@ export const updatePaymentStatus = async <T>(
   let data;
 
   if (statusData?.status === "paid") {
-    await db.$transaction(async (tx) => {
-      await tx.course.update({
+    
+        await db.$transaction(async (tx) => {
+      const getCourse = await tx.course.findUnique({
         where: { id: paymentData?.course_id },
+        include: { instructors: true },
+      });
+  
+      const instructors = getCourse?.instructors || [];
+  
+      // Create messageFriend for each instructor
+      await Promise.all(
+        instructors.map((i) =>
+          tx.messageFriend.create({
+            data: { friendId: i.id, accountId: paymentData.user_id },
+          })
+        )
+      );
+  
+      // Decrease course seat
+      await tx.course.update({
+        where: { id: paymentData.course_id },
         data: { sit: { decrement: 1 } },
       });
-      data = await db.payment.update({
+  
+      // Update payment status
+      return await tx.payment.update({
         where: { transaction_id: tranc_id },
-        data: { status: statusData?.status },
+        data: { status: statusData.status },
       });
     });
+
+
   }
 return data;
 };

@@ -44,9 +44,13 @@ model user {
   createdAt    DateTime  @default(now())
   Course Course[] @relation("courseInstructors")
   Payment Payment[]
+  friendAccount messageFriend[] @relation("friendAccount") 
+  userAccount messageFriend[] @relation("userAccount")
+  fromInfo message[] @relation("fromInfo")
+  toInfo message[] @relation("toInfo")
   @@index([name(sort: Asc), email(sort: Asc)])
   @@map("users")
-
+  
 }
 
 model Coursecategory {
@@ -179,7 +183,7 @@ model applyJob{
 }
 
 model Payment {
-  id              String   @id @default(cuid())
+  id              String   @id @default(uuid())
   amount          Float
   status          String? @default("pending")     // example: "open", "paid", "failed", "canceled"
   payment_method  String
@@ -189,8 +193,42 @@ model Payment {
   transaction_id  String?    @unique
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  user   user   @relation(fields: [user_id], references: [id])
+  course Course @relation(fields: [course_id], references: [id])
+}
+
+
+model messageFriend{
+  id              String   @id @default(uuid())
+  friendId String
+  friends  user @relation("friendAccount", fields: [friendId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  accountId String @unique
+  user  user @relation("userAccount",fields: [accountId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  createdAt         DateTime @default(now())
+}
+enum Type{
+  TEXT
+  IMAGE
+  FILE
+}
+model messageType{
+      id              String   @id @default(uuid())
+      type     Type
+      message String?
+      createdAt         DateTime @default(now())
+      messageId String
+      messages message @relation(fields: [messageId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+ }
+
 
  
-   user   user   @relation(fields: [user_id], references: [id])
-   course Course @relation(fields: [course_id], references: [id])
+ model message {
+  id          String   @id @default(uuid())
+  from        String
+  fromInfo    user     @relation("fromInfo", fields: [from], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  to          String
+  toInfo      user     @relation("toInfo", fields: [to], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  messageType messageType[]
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }

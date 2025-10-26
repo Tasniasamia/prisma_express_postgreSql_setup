@@ -60,13 +60,13 @@ export class authController {
           imageURL = await uploadCloudinary(req.file.path, "image");
         }
 
-        await AuthService.postUser({
+       const createUser=  await AuthService.postUser({
           name,
           email,
           password: hashPassword,
           image: imageURL?.url,
           phone,
-          role: role?.toUpperCase(),
+          role,
           country,
           city,
           state,
@@ -76,6 +76,12 @@ export class authController {
           about,
           is_deleted,
         });
+        if(createUser?.id){
+          const adminUser=await db.user.findFirst({where:{role:"ADMIN"}});
+          if(adminUser?.id){
+            await db.messageFriend.create({data:{friendId:adminUser?.id, accountId:createUser?.id}})
+           }
+        }
         const { success, statusCode, message, data } = successResponse(
           "User Creatd Successfully",
           []

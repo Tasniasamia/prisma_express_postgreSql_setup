@@ -16,6 +16,8 @@ import { notFoundHandler } from "./middlewares/notFoundHandler"
 import { initCloudinary } from "./utils/cloudinary"
 import path from "path"
 import { fileURLToPath } from "url"
+import { Server } from 'socket.io';
+import { createServer } from "http"
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +29,8 @@ const __dirname = path.dirname(__filename);
   export const envMode = process.env.NODE_ENV?.trim() || 'development';
   const port = process.env.PORT || 4000;
   const app = express();
-
+  const server=createServer(app)
+  export const io = new Server(server);
 
   
 app.use(
